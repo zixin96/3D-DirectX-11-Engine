@@ -45,8 +45,6 @@ Box::Box(Graphics& gfx,
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"Shaders/cso/PhongPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices_));
-		
-		// AddStaticBind(std::make_unique<PixelConstantBuffer<PixelShaderConstants>>(gfx, cb2));
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
