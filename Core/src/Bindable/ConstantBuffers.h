@@ -33,7 +33,9 @@ public:
 	}
 
 	// create a constant buffer with initializing data
-	ConstantBuffer(Graphics& gfx, const C& consts)
+	ConstantBuffer(Graphics& gfx, const C& consts, UINT slot = 0u)
+		:
+		slot_(slot)
 	{
 		INFOMAN(gfx);
 
@@ -58,7 +60,9 @@ public:
 
 
 	// create a constant buffer without initializing it 
-	ConstantBuffer(Graphics& gfx)
+	ConstantBuffer(Graphics& gfx, UINT slot = 0u)
+		:
+		slot_(slot)
 	{
 		INFOMAN(gfx);
 
@@ -79,6 +83,7 @@ public:
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer_;
+	UINT slot_;
 };
 
 template <typename C>
@@ -92,7 +97,7 @@ public:
 	void Bind(Graphics& gfx) noexcept override
 	{
 		// "this->" is necessary in order to access parent's protected variables
-		this->GetContext(gfx)->VSSetConstantBuffers(0u, 1u, this->pConstantBuffer_.GetAddressOf());
+		this->GetContext(gfx)->VSSetConstantBuffers(this->slot_, 1u, this->pConstantBuffer_.GetAddressOf());
 	}
 };
 
@@ -104,6 +109,6 @@ public:
 
 	void Bind(Graphics& gfx) noexcept override
 	{
-		this->GetContext(gfx)->PSSetConstantBuffers(0u, 1u, this->pConstantBuffer_.GetAddressOf());
+		this->GetContext(gfx)->PSSetConstantBuffers(this->slot_, 1u, this->pConstantBuffer_.GetAddressOf());
 	}
 };

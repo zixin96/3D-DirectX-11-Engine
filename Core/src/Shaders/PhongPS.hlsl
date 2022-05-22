@@ -2,16 +2,18 @@ cbuffer LightCBuf
 {
 	// we can change light position every frame
 	float3 lightPos;
+    float3 ambient;
+    float3 diffuseColor;
+    float diffuseIntensity;
+    float attConst;
+    float attLin;
+    float attQuad;
 };
 
-// TODO: for now, they are static const inside the file. We will put them in constant buffer in the future
-static const float3 materialColor = {0.7f, 0.7f, 0.9f};
-static const float3 ambient = {0.05f, 0.05f, 0.05f};
-static const float3 diffuseColor = {1.0f, 1.0f, 1.0f};
-static const float diffuseIntensity = 1.0f;
-static const float attConst = 1.0f;
-static const float attLin = 0.045f;
-static const float attQuad = 0.0075f;
+cbuffer ObjectCBuf
+{
+    float3 materialColor;
+};
 
 float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
 {
@@ -24,5 +26,5 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
 	// diffuse intensity
 	const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, n));
 	// final color (clamped between [0,1])
-	return float4(saturate(diffuse + ambient), 1.0f);
+    return float4(saturate(diffuse + ambient) * materialColor, 1.0f);
 }

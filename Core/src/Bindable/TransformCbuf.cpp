@@ -1,12 +1,12 @@
 #include "TransformCbuf.h"
 
-TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
+TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 	:
 	parent_(parent)
 {
 	if (!pVcbuf_)
 	{
-		pVcbuf_ = std::make_unique<VertexConstantBuffer<TransformCbuf::Transforms>>(gfx);
+		pVcbuf_ = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
 	}
 }
 
