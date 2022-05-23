@@ -20,7 +20,10 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 			gfx.GetCamera() *
 			gfx.GetProjection()
 		),
-		.model = DirectX::XMMatrixTranspose(model),
+		.modelView = DirectX::XMMatrixTranspose(
+			model *
+			gfx.GetCamera()
+		),
 	};
 
 	pVcbuf_->Update(gfx, tf);

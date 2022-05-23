@@ -12,7 +12,7 @@ class TransformCbuf : public Bindable
 	struct Transforms
 	{
 		DirectX::XMMATRIX modelViewProj;
-		DirectX::XMMATRIX model;
+		DirectX::XMMATRIX modelView;
 	};
 
 public:

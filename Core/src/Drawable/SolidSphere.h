@@ -1,6 +1,9 @@
 #pragma once
 #include "DrawableBase.h"
 
+/**
+ * \brief SolidSphere that currently represents our ligth source
+ */
 class SolidSphere : public DrawableBase<SolidSphere>
 {
 public:

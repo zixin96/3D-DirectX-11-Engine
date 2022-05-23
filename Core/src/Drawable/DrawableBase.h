@@ -2,6 +2,10 @@
 #include "Drawable.h"
 #include "Bindable/IndexBuffer.h"
 
+/**
+ * \brief 
+ * \tparam T 
+ */
 template <class T>
 class DrawableBase : public Drawable
 {
