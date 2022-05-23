@@ -6,6 +6,7 @@ PointLight::PointLight(Graphics& gfx, float radius)
 	mesh_(gfx, radius),
 	cbuf_(gfx)
 {
+	// initialize lighting parameters when we create the point light
 	Reset();
 }
 
@@ -36,6 +37,9 @@ void PointLight::SpawnControlWindow() noexcept
 	ImGui::End();
 }
 
+/**
+ * \brief Initialize lighting parameters
+ */
 void PointLight::Reset() noexcept
 {
 	cbData_ = {
@@ -55,8 +59,13 @@ void PointLight::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 	mesh_.Draw(gfx);
 }
 
-void PointLight::Bind(Graphics& gfx) const noexcept
+void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept
 {
-	cbuf_.Update(gfx, cbData_);
+	// compute light position in camera space
+	auto dataCopy = cbData_;
+	// to utilize SIMD, do computation using XMVECTOR
+	const auto pos = DirectX::XMLoadFloat3(&cbData_.pos);
+	DirectX::XMStoreFloat3(&dataCopy.pos, DirectX::XMVector3Transform(pos, view));
+	cbuf_.Update(gfx, dataCopy);
 	cbuf_.Bind(gfx);
 }

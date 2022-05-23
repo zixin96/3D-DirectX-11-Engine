@@ -12,17 +12,16 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
-	const auto model = parent_.GetTransformXM();
+	const auto modelView = parent_.GetTransformXM() * gfx.GetCamera();
+
 	const Transforms tf =
 	{
 		.modelViewProj = DirectX::XMMatrixTranspose(
-			model *
-			gfx.GetCamera() *
+			modelView *
 			gfx.GetProjection()
 		),
 		.modelView = DirectX::XMMatrixTranspose(
-			model *
-			gfx.GetCamera()
+			modelView
 		),
 	};
 

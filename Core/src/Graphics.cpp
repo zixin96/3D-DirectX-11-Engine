@@ -1502,7 +1502,7 @@ const char* Graphics::HrException::what() const noexcept
 
 const char* Graphics::HrException::GetType() const noexcept
 {
-	return "Graphics Exception";
+	return "3D Game Programming Graphics Exception";
 }
 
 HRESULT Graphics::HrException::GetErrorCode() const noexcept
@@ -1529,7 +1529,7 @@ std::string Graphics::HrException::GetErrorInfo() const noexcept
 
 const char* Graphics::DeviceRemovedException::GetType() const noexcept
 {
-	return "Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
+	return "3D Game Programming Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
 }
 
 // -----------------------------------------------------------------

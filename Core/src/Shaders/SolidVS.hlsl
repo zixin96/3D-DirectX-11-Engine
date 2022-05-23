@@ -1,7 +1,7 @@
 cbuffer CBuf
 {
     matrix modelViewProj;
-	matrix model;
+	matrix modelView;
 };
 
 float4 main( float3 pos : Position ) : SV_Position

@@ -16,12 +16,16 @@ float attQuad;
 // This buffer is set per object for each object we want to render (default to slot 1)
 cbuffer ObjectCBuf
 {
-float3 materialColor;
+float3 materialColors[6];
+// the reason why we need a padding here is because GPU will not pad the the last element in the array,
+// it will just use the next float to fill in (b/c a single float don't have alignment requirements)
+// If we omit this padding, then specularIntensity is lost 
+float padding;
 float specularIntensity;
 float specularPower;
 };
 
-float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal) : SV_Target
+float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, uint tid : SV_PrimitiveID) : SV_Target
 {
 	// fragment to light vector data
 	const float3 vToL = lightPosCamSpace - posCamSpace;
@@ -41,5 +45,5 @@ float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal) : SV_
 		* pow(max(0.0f, dot(normalize(-r), normalize(posCamSpace))), specularPower);
 
 	// final color
-	return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
+	return float4(saturate((diffuse + ambient + specular) * materialColors[(tid / 2) % 6]), 1.0f);
 }

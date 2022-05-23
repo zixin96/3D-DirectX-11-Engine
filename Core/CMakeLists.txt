@@ -26,7 +26,7 @@ if(MSVC)
     # set current working directoy so that relative path works
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 endif()
- 
+  
 SETUP_GROUPS("${SRC_FILES}")
 SETUP_GROUPS("${HEADER_FILES}")
 
@@ -55,3 +55,4 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongVS.hlsl
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/SolidVS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/SolidPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/IndexedPhongPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")

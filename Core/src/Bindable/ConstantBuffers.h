@@ -32,7 +32,7 @@ public:
 		GetContext(gfx)->Unmap(pConstantBuffer_.Get(), 0u);
 	}
 
-	// create a constant buffer with initializing data
+	// create a constant buffer (that binds to slot 0 by default) with initializing data 
 	ConstantBuffer(Graphics& gfx, const C& consts, UINT slot = 0u)
 		:
 		slot_(slot)
@@ -59,7 +59,7 @@ public:
 	}
 
 
-	// create a constant buffer without initializing it 
+	// create a constant buffer (that binds to slot 0 by default) without initializing it 
 	ConstantBuffer(Graphics& gfx, UINT slot = 0u)
 		:
 		slot_(slot)
@@ -90,7 +90,7 @@ template <typename C>
 class VertexConstantBuffer : public ConstantBuffer<C>
 {
 public:
-	// import parent namespace to enable us to use parent's constructor in member initializer lists 
+	// import parent namespace to enable us to use parent's constructor to construct the object
 	using ConstantBuffer<C>::ConstantBuffer;
 
 	// this function is called inside TransformCbuf::Bind

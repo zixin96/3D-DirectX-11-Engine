@@ -8,6 +8,7 @@
 #include "Utils/EngineMath.h"
 #include "Utils/Surface.h"
 // #include "Utils/GDIPlusManager.h"
+#include "Drawable/Cylinder.h"
 #include "imgui/imgui.h"
 
 // GDIPlusManager gdipm;
@@ -30,14 +31,34 @@ App::App()
 
 		std::unique_ptr<Drawable> operator()()
 		{
+			const DirectX::XMFLOAT3 mat = { cdist(rng),cdist(rng),cdist(rng) };
+
+			switch (sdist(rng))
+			{
+			case 0:
+				return std::make_unique<Box>(
+					gfx, rng, adist, ddist,
+					odist, rdist, bdist, mat
+					);
+			case 1:
+				return std::make_unique<Cylinder>(
+					gfx, rng, adist, ddist, odist,
+					rdist, bdist, tdist
+					);
+			default:
+				assert(false && "impossible drawable option in factory");
+				return {};
+			}
+
+			// select which drawable to create
+			/*
 			const DirectX::XMFLOAT3 mat = {cdist(rng), cdist(rng), cdist(rng)};
 
 			return std::make_unique<Box>(
 				gfx, rng, adist, ddist,
 				odist, rdist, bdist, mat
 			);
-			// select which drawable to create
-			/*switch (typedist(rng))
+			switch (typedist(rng))
 			{
 			case 0:
 				return std::make_unique<Pyramid>(
@@ -73,6 +94,7 @@ App::App()
 	private:
 		Graphics& gfx;
 		std::mt19937 rng{std::random_device{}()};
+		std::uniform_int_distribution<int> sdist{ 0,1 };
 		std::uniform_real_distribution<float> adist{0.0f, PI * 2.0f};
 		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
 		std::uniform_real_distribution<float> odist{0.0f, PI * 0.08f};
@@ -81,6 +103,7 @@ App::App()
 		std::uniform_int_distribution<int> latdist{5, 20};
 		std::uniform_int_distribution<int> longdist{10, 40};
 		std::uniform_real_distribution<float> cdist{0.0f, 1.0f};
+		std::uniform_int_distribution<int> tdist{ 3,30 };
 		// std::uniform_int_distribution<int> typedist{0, 4};
 	};
 
@@ -112,7 +135,7 @@ void App::DoFrame()
 	const auto dt = timer_.Mark() * speedFactor_;;
 	wnd_.GetGraphics().BeginFrame(0.07f, 0.0f, 0.12f);
 	wnd_.GetGraphics().SetCamera(cam_.GetMatrix());
-	light_.Bind(wnd_.GetGraphics());
+	light_.Bind(wnd_.GetGraphics(), cam_.GetMatrix());
 
 	for (auto& d : drawables_)
 	{
@@ -126,7 +149,7 @@ void App::DoFrame()
 	// imgui window to control simulation speed
 	if (ImGui::Begin("Simulation Speed"))
 	{
-		ImGui::SliderFloat("Speed Factor", &speedFactor_, 0.0f, 4.0f);
+		ImGui::SliderFloat("Speed Factor", &speedFactor_, 0.0f, 6.0f, "%.4f");
 		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Status: %s", wnd_.kbd_.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
 	}
