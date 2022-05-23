@@ -62,3 +62,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/BlendedPhong
 
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/TexturedPhongVS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/TexturedPhongPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+
+set(HEADER_PCH_FILES
+    <unordered_map>)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${HEADER_PCH_FILES})

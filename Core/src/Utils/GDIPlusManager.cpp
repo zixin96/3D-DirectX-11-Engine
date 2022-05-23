@@ -1,5 +1,5 @@
 #define FULL_WINTARD
-#include "WinHelper.h"
+#include "Utils/WinHelper.h"
 #include "GDIPlusManager.h"
 #include <algorithm>
 

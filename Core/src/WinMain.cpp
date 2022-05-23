@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "App.h"
 #include "Window/Window.h"
 
