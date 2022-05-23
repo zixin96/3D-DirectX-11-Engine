@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <array>
 #include "IndexedTriangleList.h"
 #include "Utils/EngineMath.h"
 

@@ -1,6 +1,4 @@
 #pragma once
-#include <queue>
-#include <bitset>
 
 /**
  * \brief A class that encapsulates access to the keyboard input

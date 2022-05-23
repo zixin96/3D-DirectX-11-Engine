@@ -1,6 +1,4 @@
 #include "DXException.h"
-#include <sstream>
-
 
 DXException::DXException(int line, const char* file) noexcept
 	:

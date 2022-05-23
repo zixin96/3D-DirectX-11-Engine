@@ -5,7 +5,6 @@
 #include "Drawable/Box.h"
 #include "Utils/Timer.h"
 #include "Imgui/ImguiManager.h"
-#include <set>
 
 class App
 {

@@ -1,8 +1,7 @@
 #include "Window.h"
-#include <sstream>
 #include "WindowsResource/resource.h"
 #include "Debug/WindowsThrowMacros.h"
-#include "imgui/backends/imgui_impl_win32.h"
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept

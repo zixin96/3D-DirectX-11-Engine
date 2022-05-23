@@ -3,11 +3,6 @@
 #include "Debug/GraphicsThrowMacros.h"
 #include "imgui/backends/imgui_impl_dx11.h"
 
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
-#include <sstream>
-#include <backends/imgui_impl_win32.h>
-
 // prefer changing namespace in cpp files
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;

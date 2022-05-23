@@ -1,5 +1,4 @@
 #pragma once
-#include <chrono>
 
 /**
  * \brief A wrapper around std::chrono

@@ -2,7 +2,6 @@
 #include "Bindable/BindableBase.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include "Cone.h"
-#include <array>
 
 
 Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng,

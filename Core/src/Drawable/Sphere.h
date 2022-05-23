@@ -1,6 +1,5 @@
 #pragma once
 #include "IndexedTriangleList.h"
-#include <DirectXMath.h>
 #include "Utils/EngineMath.h"
 
 class Sphere

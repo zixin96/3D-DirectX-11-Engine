@@ -1,6 +1,4 @@
 #pragma once
-#define FULL_WINTARD
-#include "Utils/WinHelper.h"
 
 /**
  * \brief This Windows Message Logger is used to log all messages coming into the window procedure

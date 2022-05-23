@@ -1,7 +1,6 @@
 #pragma once
 #include "ConstantBuffers.h"
 #include "Drawable/Drawable.h"
-#include <DirectXMath.h>
 
 /**
  * \brief TransformCbuf acts as a wrapper around Vertex Constant buffer.

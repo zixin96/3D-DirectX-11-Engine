@@ -1,6 +1,4 @@
 #pragma once
-#include <vector>
-#include <DirectXMath.h>
 
 template <class T>
 class IndexedTriangleList

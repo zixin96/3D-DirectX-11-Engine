@@ -1,15 +1,10 @@
-#define FULL_WINTARD
-#include "Utils/WinHelper.h"
 #include "GDIPlusManager.h"
-#include <algorithm>
 
 namespace Gdiplus
 {
 	using std::min;
 	using std::max;
 }
-
-#include <gdiplus.h>
 
 ULONG_PTR GDIPlusManager::token_ = 0;
 int GDIPlusManager::refCount_ = 0;

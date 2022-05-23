@@ -1,7 +1,6 @@
 #include "Drawable.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include "Bindable/IndexBuffer.h"
-#include <cassert>
 
 void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {

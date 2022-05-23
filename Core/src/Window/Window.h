@@ -1,11 +1,9 @@
 #pragma once
-#include "Utils/WinHelper.h"
+
 #include "Debug/DXException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
-#include <optional>
-#include <memory>
 
 /**
  * \brief A class that encapsulates access to Win32 windows

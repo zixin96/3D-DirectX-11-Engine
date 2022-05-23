@@ -1,9 +1,6 @@
 #pragma once
-#include "Utils/WinHelper.h"
+
 #include "Debug/DXException.h"
-#include <string>
-#include <assert.h>
-#include <memory>
 
 class Surface
 {

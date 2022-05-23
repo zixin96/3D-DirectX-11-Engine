@@ -1,5 +1,4 @@
 #include "App.h"
-#include <memory>
 
 #include "Drawable/Melon.h"
 #include "Drawable/Pyramid.h"

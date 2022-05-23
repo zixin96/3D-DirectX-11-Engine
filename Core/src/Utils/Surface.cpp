@@ -1,6 +1,4 @@
-#define FULL_WINTARD
 #include "Surface.h"
-#include <algorithm>
 
 namespace Gdiplus
 {
@@ -8,8 +6,6 @@ namespace Gdiplus
 	using std::max;
 }
 
-#include <gdiplus.h>
-#include <sstream>
 
 #pragma comment( lib,"gdiplus.lib" )
 

@@ -1,5 +1,4 @@
 #pragma once
-#include <queue>
 
 /**
  * \brief A class that encapsulates access to the mouse input

@@ -1,6 +1,4 @@
 #pragma once
-#include <exception>
-#include <string>
 
 /**
  * \brief The parent class of all our exceptions

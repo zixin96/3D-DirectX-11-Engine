@@ -4,3 +4,4 @@ deps/archives/
 deps/src/
 imgui.ini
 .vs
+Core/src/Shaders/cso/

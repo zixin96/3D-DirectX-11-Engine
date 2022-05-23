@@ -1,8 +1,4 @@
 #include "WindowsMessageMap.h"
-#include <Windows.h>
-#include <string>
-#include <sstream>
-#include <iomanip>
 
 // secret messages
 #define WM_UAHDESTROYWINDOW 0x0090
