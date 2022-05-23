@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawableBase.h"
+#include "Utils/EngineMath.h"
 
 /**
  * \brief This class abstracts parameters that drawable shares
@@ -28,17 +29,17 @@ public:
 	{
 	}
 
-	void Update(float dt) noexcept override
+	void Update(float dt) noexcept
 	{
-		roll += droll * dt;
-		pitch += dpitch * dt;
-		yaw += dyaw * dt;
-		theta += dtheta * dt;
-		phi += dphi * dt;
-		chi += dchi * dt;
+		roll = wrap_angle(roll + droll * dt);
+		pitch = wrap_angle(pitch + dpitch * dt);
+		yaw = wrap_angle(yaw + dyaw * dt);
+		theta = wrap_angle(theta + dtheta * dt);
+		phi = wrap_angle(phi + dphi * dt);
+		chi = wrap_angle(chi + dchi * dt);
 	}
 
-	DirectX::XMMATRIX GetTransformXM() const noexcept override
+	DirectX::XMMATRIX GetTransformXM() const noexcept
 	{
 		namespace dx = DirectX;
 		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
@@ -46,7 +47,7 @@ public:
 			dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 	}
 
-private:
+protected:
 	// positional
 	float r;
 	float roll = 0.0f;

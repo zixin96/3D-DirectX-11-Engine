@@ -117,12 +117,20 @@ App::App()
 		// std::uniform_int_distribution<int> typedist{0, 4};
 	};
 
-	// Factory f(wnd_.GetGraphics());
-	// drawables_.reserve(nDrawables_);
-	// std::generate_n(std::back_inserter(drawables_), nDrawables_, f);
 
 	drawables_.reserve(nDrawables_);
 	std::generate_n(std::back_inserter(drawables_), nDrawables_, Factory{wnd_.GetGraphics()});
+
+	// init box pointers for editing instance parameters
+	for (auto& pd : drawables_)
+	{
+		// only want boxes_
+		if (auto pb = dynamic_cast<Box*>(pd.get()))
+		{
+			boxes_.push_back(pb);
+		}
+	}
+
 	wnd_.GetGraphics().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
@@ -154,16 +162,8 @@ void App::DoFrame()
 	}
 	light_.Draw(wnd_.GetGraphics());
 
-	static char buffer[1024];
-
 	// imgui window to control simulation speed
-	if (ImGui::Begin("Simulation Speed"))
-	{
-		ImGui::SliderFloat("Speed Factor", &speedFactor_, 0.0f, 6.0f, "%.4f");
-		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Status: %s", wnd_.kbd_.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
-	}
-	ImGui::End();
+	SpawnSimulationWindow();
 
 	// imgui window to control camera
 	cam_.SpawnControlWindow();
@@ -171,6 +171,69 @@ void App::DoFrame()
 	// imgui window to contrl light
 	light_.SpawnControlWindow();
 
+	// imgui window to open box windows
+	SpawnBoxWindowManagerWindow();
+
+	// imgui box attribute control windows
+	SpawnBoxWindows();
+
 	// present
 	wnd_.GetGraphics().EndFrame();
+}
+
+void App::SpawnSimulationWindow() noexcept
+{
+	if (ImGui::Begin("Simulation Speed"))
+	{
+		ImGui::SliderFloat("Speed Factor", &speedFactor_, 0.0f, 6.0f, "%.4f");
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Status: %s", wnd_.kbd_.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
+	}
+	ImGui::End();
+}
+
+void App::SpawnBoxWindowManagerWindow() noexcept
+{
+	if (ImGui::Begin("Boxes"))
+	{
+		using namespace std::string_literals;
+		const auto preview = comboBoxIndex_ ? std::to_string(*comboBoxIndex_) : "Choose a box..."s;
+		if (ImGui::BeginCombo("Box Number", preview.c_str()))
+		{
+			for (int i = 0; i < boxes_.size(); i++)
+			{
+				// const bool selected = *comboBoxIndex_ == i;
+				if (ImGui::Selectable(std::to_string(i).c_str()))
+				{
+					comboBoxIndex_ = i;
+				}
+				/*if (selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}*/
+			}
+			ImGui::EndCombo();
+		}
+		if (ImGui::Button("Spawn Control Window") && comboBoxIndex_)
+		{
+			boxControlIds_.insert(*comboBoxIndex_);
+			comboBoxIndex_.reset();
+		}
+	}
+	ImGui::End();
+}
+
+void App::SpawnBoxWindows() noexcept
+{
+	for (auto i = boxControlIds_.begin(); i != boxControlIds_.end();)
+	{
+		if (!boxes_[*i]->SpawnControlWindow(*i, wnd_.GetGraphics()))
+		{
+			i = boxControlIds_.erase(i);
+		}
+		else
+		{
+			i++;
+		}
+	}
 }

@@ -19,6 +19,19 @@ public:
 
 	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
 protected:
+	template <class T>
+	T* QueryBindable() noexcept
+	{
+		for (auto& pb : binds_)
+		{
+			if (auto pt = dynamic_cast<T*>(pb.get()))
+			{
+				return pt;
+			}
+		}
+		return nullptr;
+	}
+
 	// unique pointer pass-by-value means we need to std::move it
 	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept(!IS_DEBUG);
