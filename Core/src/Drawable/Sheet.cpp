@@ -46,7 +46,7 @@ Sheet::Sheet(Graphics& gfx,
 		model.vertices_[3].tex = {1.0f, 1.0f};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices_));
 
-		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("shared/Images/PowerLich.png")));
+		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("Images/PowerLich.png")));
 
 		AddStaticBind(std::make_unique<Sampler>(gfx));
 

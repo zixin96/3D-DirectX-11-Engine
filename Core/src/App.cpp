@@ -7,11 +7,11 @@
 #include "Drawable/SkinnedBox.h"
 #include "Utils/EngineMath.h"
 #include "Utils/Surface.h"
-// #include "Utils/GDIPlusManager.h"
+#include "Utils/GDIPlusManager.h"
 #include "Drawable/Cylinder.h"
 #include "imgui/imgui.h"
 
-// GDIPlusManager gdipm;
+GDIPlusManager gdipm;
 
 namespace dx = DirectX;
 
@@ -31,7 +31,7 @@ App::App()
 
 		std::unique_ptr<Drawable> operator()()
 		{
-			const DirectX::XMFLOAT3 mat = { cdist(rng),cdist(rng),cdist(rng) };
+			const DirectX::XMFLOAT3 mat = {cdist(rng), cdist(rng), cdist(rng)};
 
 			switch (sdist(rng))
 			{
@@ -39,12 +39,22 @@ App::App()
 				return std::make_unique<Box>(
 					gfx, rng, adist, ddist,
 					odist, rdist, bdist, mat
-					);
+				);
 			case 1:
 				return std::make_unique<Cylinder>(
 					gfx, rng, adist, ddist, odist,
 					rdist, bdist, tdist
-					);
+				);
+			case 2:
+				return std::make_unique<Pyramid>(
+					gfx, rng, adist, ddist, odist,
+					rdist, tdist
+				);
+			case 3:
+				return std::make_unique<SkinnedBox>(
+					gfx, rng, adist, ddist,
+					odist, rdist
+				);
 			default:
 				assert(false && "impossible drawable option in factory");
 				return {};
@@ -94,7 +104,7 @@ App::App()
 	private:
 		Graphics& gfx;
 		std::mt19937 rng{std::random_device{}()};
-		std::uniform_int_distribution<int> sdist{ 0,1 };
+		std::uniform_int_distribution<int> sdist{0, 3};
 		std::uniform_real_distribution<float> adist{0.0f, PI * 2.0f};
 		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
 		std::uniform_real_distribution<float> odist{0.0f, PI * 0.08f};
@@ -103,7 +113,7 @@ App::App()
 		std::uniform_int_distribution<int> latdist{5, 20};
 		std::uniform_int_distribution<int> longdist{10, 40};
 		std::uniform_real_distribution<float> cdist{0.0f, 1.0f};
-		std::uniform_int_distribution<int> tdist{ 3,30 };
+		std::uniform_int_distribution<int> tdist{3, 30};
 		// std::uniform_int_distribution<int> typedist{0, 4};
 	};
 
