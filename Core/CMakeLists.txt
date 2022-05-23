@@ -63,32 +63,37 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/BlendedPhong
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/TexturedPhongVS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/TexturedPhongPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 
+# pch boosts our fucking compiler time
 set(HEADER_PCH_FILES
     <unordered_map>
     <iostream>
     <sstream>
     <memory>
     <set>
-    <DirectXMath.h>
     <exception>
     <string>
     <vector>
-    <dxgidebug.h>
-    <wrl.h>
     <cassert>
     <array>
-    <d3dcompiler.h>
-    <backends/imgui_impl_win32.h>
-    <d3d11.h>
     <random>
-    <math.h>
     <algorithm>
     <chrono>
     <queue>
     <bitset>
     <optional>
     <iomanip>
+    <wrl.h>
+    <math.h>
+    <d3dcompiler.h>
+    <dxgidebug.h>
+    <backends/imgui_impl_win32.h>
+    <backends/imgui_impl_dx11.h>
+    <d3d11.h>
     <gdiplus.h>
+    <DirectXMath.h>
     src/Debug/dxerr.h
     src/Utils/WinHelper.h)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${HEADER_PCH_FILES})
+
+# link necessary d3d libs
+target_link_libraries(${PROJECT_NAME} d3d11.lib D3DCompiler.lib dxguid.lib gdiplus.lib)

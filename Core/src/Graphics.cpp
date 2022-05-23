@@ -1,15 +1,9 @@
 #include "Graphics.h"
-#include "Debug/dxerr.h"
 #include "Debug/GraphicsThrowMacros.h"
-#include "imgui/backends/imgui_impl_dx11.h"
 
 // prefer changing namespace in cpp files
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
-
-// add d3d11.lib to linker
-#pragma comment(lib,"d3d11.lib")
-#pragma comment(lib,"D3DCompiler.lib") // for loading shaders, but you can also use this to load shaders at runtime
 
 Graphics::Graphics(HWND hWnd)
 {

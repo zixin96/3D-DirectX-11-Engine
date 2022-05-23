@@ -6,9 +6,6 @@ namespace Gdiplus
 	using std::max;
 }
 
-
-#pragma comment( lib,"gdiplus.lib" )
-
 Surface::Surface(unsigned int width, unsigned int height) noexcept
 	:
 	pBuffer_(std::make_unique<Color[]>(width * height)),

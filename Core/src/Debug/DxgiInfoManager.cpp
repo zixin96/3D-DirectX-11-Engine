@@ -4,8 +4,6 @@
 #include "WindowsThrowMacros.h"
 #include "GraphicsThrowMacros.h"
 
-#pragma comment(lib, "dxguid.lib")
-
 /**
  * \brief Retrieves Debug Interface from DLL
  */
