@@ -81,7 +81,8 @@ set(HEADER_PCH_FILES
     <queue>
     <bitset>
     <optional>
-    <iomanip>)
+    <iomanip>
+    <type_traits>)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${HEADER_PCH_FILES})
 
 # link necessary d3d libs
