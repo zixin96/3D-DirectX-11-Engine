@@ -20,80 +20,6 @@ App::App()
 	wnd_(1600, 1200, "The Donkey Fart Box"),
 	light_(wnd_.GetGraphics())
 {
-	class Factory
-	{
-	public:
-		Factory(Graphics& gfx)
-			:
-			gfx(gfx)
-		{
-		}
-
-		std::unique_ptr<Drawable> operator()()
-		{
-			const DirectX::XMFLOAT3 mat = {cdist(rng), cdist(rng), cdist(rng)};
-
-			switch (sdist(rng))
-			{
-			case 0:
-				return std::make_unique<Box>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist, mat
-				);
-			case 1:
-				return std::make_unique<Cylinder>(
-					gfx, rng, adist, ddist, odist,
-					rdist, bdist, tdist
-				);
-			case 2:
-				return std::make_unique<Pyramid>(
-					gfx, rng, adist, ddist, odist,
-					rdist, tdist
-				);
-			case 3:
-				return std::make_unique<SkinnedBox>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-				);
-			case 4:
-				return std::make_unique<AssTest>(
-					gfx, rng, adist, ddist,
-					odist, rdist, mat, 1.5f
-				);
-			default:
-				assert(false && "impossible drawable option in factory");
-				return {};
-			}
-		}
-
-	private:
-		Graphics& gfx;
-		std::mt19937 rng{std::random_device{}()};
-		std::uniform_int_distribution<int> sdist{0, 4};
-		std::uniform_real_distribution<float> adist{0.0f, PI * 2.0f};
-		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
-		std::uniform_real_distribution<float> odist{0.0f, PI * 0.08f};
-		std::uniform_real_distribution<float> rdist{6.0f, 20.0f};
-		std::uniform_real_distribution<float> bdist{0.4f, 3.0f};
-		std::uniform_int_distribution<int> latdist{5, 20};
-		std::uniform_int_distribution<int> longdist{10, 40};
-		std::uniform_real_distribution<float> cdist{0.0f, 1.0f};
-		std::uniform_int_distribution<int> tdist{3, 30};
-	};
-
-	drawables_.reserve(nDrawables_);
-	std::generate_n(std::back_inserter(drawables_), nDrawables_, Factory{wnd_.GetGraphics()});
-
-	// init box pointers for editing instance parameters
-	for (auto& pd : drawables_)
-	{
-		// only want boxes_
-		if (auto pb = dynamic_cast<Box*>(pd.get()))
-		{
-			boxes_.push_back(pb);
-		}
-	}
-
 	wnd_.GetGraphics().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
@@ -111,6 +37,25 @@ int App::Go()
 	}
 }
 
+void App::ShowModelWindow()
+{
+	if (ImGui::Begin("Model"))
+	{
+		using namespace std::string_literals;
+
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
+
+		ImGui::Text("Position");
+		ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
+		ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
+		ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
+	}
+	ImGui::End();
+}
+
 void App::DoFrame()
 {
 	const auto dt = timer_.Mark() * speedFactor_;;
@@ -118,85 +63,16 @@ void App::DoFrame()
 	wnd_.GetGraphics().SetCamera(cam_.GetMatrix());
 	light_.Bind(wnd_.GetGraphics(), cam_.GetMatrix());
 
-	for (auto& d : drawables_)
-	{
-		d->Update(wnd_.kbd_.KeyIsPressed(VK_SPACE) ? 0.0f : dt);
-		d->Draw(wnd_.GetGraphics());
-	}
+	const auto transform = dx::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw)
+		* dx::XMMatrixTranslation(pos.x, pos.y, pos.z);
+	nano.Draw(wnd_.GetGraphics(), transform);
 	light_.Draw(wnd_.GetGraphics());
 
-	// imgui window to control simulation speed
-	SpawnSimulationWindow();
-
-	// imgui window to control camera
+	// imgui windows
 	cam_.SpawnControlWindow();
-
-	// imgui window to contrl light
 	light_.SpawnControlWindow();
-
-	// imgui window to open box windows
-	SpawnBoxWindowManagerWindow();
-
-	// imgui box attribute control windows
-	SpawnBoxWindows();
+	ShowModelWindow();
 
 	// present
 	wnd_.GetGraphics().EndFrame();
-}
-
-void App::SpawnSimulationWindow() noexcept
-{
-	if (ImGui::Begin("Simulation Speed"))
-	{
-		ImGui::SliderFloat("Speed Factor", &speedFactor_, 0.0f, 6.0f, "%.4f");
-		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Status: %s", wnd_.kbd_.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
-	}
-	ImGui::End();
-}
-
-void App::SpawnBoxWindowManagerWindow() noexcept
-{
-	if (ImGui::Begin("Boxes"))
-	{
-		using namespace std::string_literals;
-		const auto preview = comboBoxIndex_ ? std::to_string(*comboBoxIndex_) : "Choose a box..."s;
-		if (ImGui::BeginCombo("Box Number", preview.c_str()))
-		{
-			for (int i = 0; i < boxes_.size(); i++)
-			{
-				// const bool selected = *comboBoxIndex_ == i;
-				if (ImGui::Selectable(std::to_string(i).c_str()))
-				{
-					comboBoxIndex_ = i;
-				}
-				/*if (selected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}*/
-			}
-			ImGui::EndCombo();
-		}
-		if (ImGui::Button("Spawn Control Window") && comboBoxIndex_)
-		{
-			boxControlIds_.insert(*comboBoxIndex_);
-			comboBoxIndex_.reset();
-		}
-	}
-	ImGui::End();
-}
-
-void App::SpawnBoxWindows() noexcept
-{
-	for (auto i = boxControlIds_.begin(); i != boxControlIds_.end();)
-	{
-		if (!boxes_[*i]->SpawnControlWindow(*i, wnd_.GetGraphics()))
-		{
-			i = boxControlIds_.erase(i);
-		}
-		else
-		{
-			i++;
-		}
-	}
 }

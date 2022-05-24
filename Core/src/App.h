@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+#include "Mesh.h"
 #include "PointLight.h"
 #include "Window/Window.h"
 #include "Drawable/Box.h"
@@ -17,19 +18,22 @@ public:
 
 private:
 	void DoFrame();
-	void SpawnSimulationWindow() noexcept;
-	void SpawnBoxWindowManagerWindow() noexcept;
-	void SpawnBoxWindows() noexcept;
+	void ShowModelWindow();
 
 	ImguiManager imgui_;
 	Window wnd_;
 	Timer timer_;
 	Camera cam_;
-	std::vector<std::unique_ptr<Drawable>> drawables_;
-	std::vector<Box*> boxes_;
 	float speedFactor_ = 1.0f;
 	PointLight light_;
-	static constexpr size_t nDrawables_ = 180;
-	std::optional<int> comboBoxIndex_;
-	std::set<int> boxControlIds_;
+	Model nano{wnd_.GetGraphics(), "Models/nanosuit.obj"};
+	struct
+	{
+		float roll = 0.0f;
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+	} pos;
 };

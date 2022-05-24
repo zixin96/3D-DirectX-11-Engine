@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics.h"
 
+
 /**
  * \brief An interface presenting all bindable objects (like pixel shader, input layout, etc)
  */

@@ -1,5 +1,5 @@
 #pragma once
-#include "DrawableBase.h"
+#include "DrawableCommon.h"
 
 /**
  * \brief SolidSphere that currently represents our ligth source
