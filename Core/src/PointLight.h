@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
-#include "Drawable/SolidSphere.h"
 #include "Bindable/ConstantBuffers.h"
+#include "Drawable/Geometry/SolidSphere.h"
 
 /**
  * \brief Each scene has a set of point light globally

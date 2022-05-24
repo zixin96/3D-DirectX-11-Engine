@@ -1,14 +1,7 @@
 #include "App.h"
-
-#include "Drawable/AssTest.h"
-#include "Drawable/Melon.h"
-#include "Drawable/Pyramid.h"
-#include "Drawable/Sheet.h"
-#include "Drawable/SkinnedBox.h"
 #include "Utils/EngineMath.h"
 #include "Utils/Surface.h"
 #include "Utils/GDIPlusManager.h"
-#include "Drawable/Cylinder.h"
 #include "imgui/imgui.h"
 
 GDIPlusManager gdipm;

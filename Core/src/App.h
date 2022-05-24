@@ -1,9 +1,8 @@
 #pragma once
 #include "Camera.h"
-#include "Mesh.h"
 #include "PointLight.h"
+#include "Drawable/Complex/Mesh.h"
 #include "Window/Window.h"
-#include "Drawable/Box.h"
 #include "Utils/Timer.h"
 #include "Imgui/ImguiManager.h"
 
