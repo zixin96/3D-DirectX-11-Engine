@@ -1,5 +1,5 @@
 #pragma once
-#include "TestObject.h"
+#include "Drawable/TestObject.h"
 #include "Bindable/ConstantBuffers.h"
 
 class Box : public TestObject<Box>

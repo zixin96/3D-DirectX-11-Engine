@@ -1,5 +1,5 @@
 #pragma once
-#include "TestObject.h"
+#include "Drawable/TestObject.h"
 
 class Pyramid : public TestObject<Pyramid>
 {

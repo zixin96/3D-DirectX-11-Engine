@@ -1,5 +1,5 @@
 #pragma once
-#include "TestObject.h"
+#include "Drawable/TestObject.h"
 
 class SkinnedBox : public TestObject<SkinnedBox>
 {
