@@ -81,19 +81,8 @@ set(HEADER_PCH_FILES
     <queue>
     <bitset>
     <optional>
-    <iomanip>
-    <wrl.h>
-    <math.h>
-    <d3dcompiler.h>
-    <dxgidebug.h>
-    <backends/imgui_impl_win32.h>
-    <backends/imgui_impl_dx11.h>
-    <d3d11.h>
-    <gdiplus.h>
-    <DirectXMath.h>
-    src/Debug/dxerr.h
-    src/Utils/WinHelper.h)
+    <iomanip>)
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${HEADER_PCH_FILES})
 
 # link necessary d3d libs
-target_link_libraries(${PROJECT_NAME} d3d11.lib D3DCompiler.lib dxguid.lib gdiplus.lib)
+target_link_libraries(${PROJECT_NAME} d3d11.lib D3DCompiler.lib dxguid.lib gdiplus.lib assimp)

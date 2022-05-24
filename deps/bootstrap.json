@@ -6,5 +6,13 @@
             "url": "https://github.com/ocornut/imgui.git",
             "revision" : "v1.87"
         }
+    },
+    {
+        "name": "assimp",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/assimp/assimp.git",
+            "revision": "4d451fe437195025cb933c69670aacf4f92968b3"
+        }
     }
 ]

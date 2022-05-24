@@ -1,5 +1,9 @@
 #include "Graphics.h"
+
 #include "Debug/GraphicsThrowMacros.h"
+#include "backends/imgui_impl_dx11.h"
+#include "backends/imgui_impl_win32.h"
+#include "Debug/dxerr.h"
 
 // prefer changing namespace in cpp files
 namespace wrl = Microsoft::WRL;

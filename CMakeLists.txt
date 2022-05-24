@@ -27,5 +27,22 @@ endif()
 
 include_directories(.)
 include_directories(deps/src)
+include_directories(deps/src/assimp/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/deps/src/assimp/include)
 
 add_subdirectory(Core)
+add_subdirectory(deps/src/assimp)
+
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "")
+set(ASSIMP_BUILD_DRACO OFF CACHE BOOL "")
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "")
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "")
+set(ASSIMP_INSTALL_PDB OFF CACHE BOOL "")
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "")
+set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "")
+set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "")
+
+set_property(TARGET assimp        PROPERTY FOLDER "ThirdPartyLibraries")
+set_property(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTY FOLDER "ThirdPartyLibraries")
+
+

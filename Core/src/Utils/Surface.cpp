@@ -1,3 +1,6 @@
+#define FULL_WINTARD
+#include "Utils/WinHelper.h"
+
 #include "Surface.h"
 
 namespace Gdiplus
@@ -5,6 +8,8 @@ namespace Gdiplus
 	using std::min;
 	using std::max;
 }
+
+#include <gdiplus.h>
 
 Surface::Surface(unsigned int width, unsigned int height) noexcept
 	:

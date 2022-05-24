@@ -30,7 +30,7 @@ protected:
 		staticBinds_.push_back(std::move(ibuf));
 	}
 
-	// this funciton is used to set the index buffer pointer of the instances created after the first instance
+	// this function is used to set the index buffer pointer of the instances created after the first instance
 	void SetIndexFromStatic() noexcept(!IS_DEBUG)
 	{
 		assert("Attempting to add index buffer a second time" && pIndexBuffer_ == nullptr);
