@@ -1,5 +1,5 @@
 #include "Sheet.h"
-#include "Bindable/BindableBase.h"
+#include "Bindable/BindableCommon.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include "Plane.h"
 #include "Utils/Surface.h"

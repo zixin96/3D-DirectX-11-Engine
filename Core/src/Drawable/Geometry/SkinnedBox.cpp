@@ -1,5 +1,5 @@
 #include "SkinnedBox.h"
-#include "Bindable/BindableBase.h"
+#include "Bindable/BindableCommon.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include "Cube.h"
 #include "Bindable/Sampler.h"

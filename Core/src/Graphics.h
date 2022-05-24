@@ -7,6 +7,9 @@
 #include <wrl.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+
+class Bindable;
+
 /**
  * \brief Represents graphical output
  */
@@ -60,7 +63,7 @@ public:
 		std::string info_;
 	};
 
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, int width, int height);
 
 	// we don't want to copy/move Graphics object
 	Graphics(const Graphics&) = delete;

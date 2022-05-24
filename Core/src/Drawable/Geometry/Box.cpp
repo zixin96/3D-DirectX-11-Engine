@@ -2,7 +2,7 @@
 
 #include "Cube.h"
 #include "Sphere.h"
-#include "Bindable/BindableBase.h"
+#include "Bindable/BindableCommon.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include "imgui/imgui.h"
 

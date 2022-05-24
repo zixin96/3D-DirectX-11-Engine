@@ -1,5 +1,5 @@
 #include "AssTest.h"
-#include "Bindable/BindableBase.h"
+#include "Bindable/BindableCommon.h"
 #include "Debug/GraphicsThrowMacros.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

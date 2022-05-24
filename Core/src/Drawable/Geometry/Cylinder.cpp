@@ -1,6 +1,6 @@
 ﻿#include "Cylinder.h"
 #include "Prism.h"
-#include "Bindable/BindableBase.h"
+#include "Bindable/BindableCommon.h"
 
 Cylinder::Cylinder(Graphics& gfx, std::mt19937& rng,
                    std::uniform_real_distribution<float>& adist,

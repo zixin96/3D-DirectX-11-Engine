@@ -9,14 +9,14 @@
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
 
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd, int width, int height)
 {
 	// ---------------Swap Chain and Device Creation Stage--------------------------
 	// Describes a swap chain
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	// automatically configure the buffer width/height based on window
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
@@ -113,8 +113,8 @@ Graphics::Graphics(HWND hWnd)
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {
 		// These should match those of the swap chain
-		.Width = 1600,
-		.Height = 1200,
+		.Width = (UINT)width,
+		.Height = (UINT)height,
 		.MipLevels = 1u,
 		.ArraySize = 1u,
 		// special format for depth values
@@ -156,9 +156,9 @@ Graphics::Graphics(HWND hWnd)
 		// Y position of the top of the viewport
 		.TopLeftY = 0,
 		// Width of the viewport
-		.Width = 1600,
+		.Width = (FLOAT)width,
 		// Height of the viewport
-		.Height = 1200,
+		.Height = (FLOAT)height,
 		// Minimum depth of the viewport
 		.MinDepth = 0,
 		// Maximum depth of the viewport
