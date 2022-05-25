@@ -27,7 +27,7 @@ const char* DXWindow::HrException::what() const noexcept
 
 const char* DXWindow::HrException::GetType() const noexcept
 {
-	return "Window HrException";
+	return "3D Game Programming Window HrException";
 }
 
 HRESULT DXWindow::HrException::GetErrorCode() const noexcept
@@ -79,7 +79,7 @@ std::string DXWindow::Exception::TranslateErrorCode(HRESULT hr) noexcept
 
 const char* DXWindow::NoGfxException::GetType() const noexcept
 {
-	return "Window Exception [No Graphics]";
+	return "3D Game Programming Window Exception [No Graphics]";
 }
 
 

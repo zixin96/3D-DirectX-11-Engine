@@ -22,12 +22,12 @@ int WINAPI WinMain(
 	// then, catch standard exception
 	catch (const std::exception& e)
 	{
-		MessageBox(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, e.what(), "3D Game Programming Standard Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	// WTF??? is this exception?
 	catch (...)
 	{
-		MessageBox(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "No details available", "3D Game Programming Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	return -1;
 }

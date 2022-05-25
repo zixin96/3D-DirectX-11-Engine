@@ -54,13 +54,14 @@ public:
 		HRESULT hr_;
 	};
 
+	// we create another class for "no graphics" exception
+	// b/c there is no HRESULT associated with this kind of exception
 	class NoGfxException : public Exception
 	{
 	public:
+		// make parent default constructor available
 		using Exception::Exception;
 		const char* GetType() const noexcept override;
-
-		// Note: there is no HRESULT associated with this kind of exception
 	};
 
 	// -------------------------------------------------------------------------

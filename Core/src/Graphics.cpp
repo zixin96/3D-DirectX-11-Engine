@@ -1556,7 +1556,7 @@ const char* Graphics::InfoException::what() const noexcept
 
 const char* Graphics::InfoException::GetType() const noexcept
 {
-	return "Graphics Info Exception";
+	return "3D Game Programming Graphics Info Exception";
 }
 
 std::string Graphics::InfoException::GetErrorInfo() const noexcept
