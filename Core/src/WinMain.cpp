@@ -13,14 +13,18 @@ int WINAPI WinMain(
 	{
 		App{}.Go();
 	}
+	// catch engine Exception
 	catch (const DXException& e)
 	{
+		// the first parameter indicates that this message box doesn't have a "parent" window
 		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
 	}
+	// then, catch standard exception
 	catch (const std::exception& e)
 	{
 		MessageBox(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
+	// WTF??? is this exception?
 	catch (...)
 	{
 		MessageBox(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);

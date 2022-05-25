@@ -27,7 +27,7 @@ public:
 		}
 	}
 
-	void SetNormalsIndependentFlat() noexcept(!IS_DEBUG)
+	void SetNormalsIndependentFlat() noxnd
 	{
 		using namespace DirectX;
 		assert(indices_.size() % 3 == 0 && indices_.size() > 0);

@@ -17,7 +17,7 @@ public:
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 	virtual void Update(float dt) noexcept {};
 
-	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
+	void Draw(Graphics& gfx) const noxnd;
 protected:
 	template <class T>
 	T* QueryBindable() noexcept
@@ -33,8 +33,8 @@ protected:
 	}
 
 	// unique pointer pass-by-value means we need to std::move it
-	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
-	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept(!IS_DEBUG);
+	void AddBind(std::unique_ptr<Bindable> bind) noxnd;
+	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noxnd;
 private:
 	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
 

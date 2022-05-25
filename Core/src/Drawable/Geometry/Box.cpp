@@ -111,7 +111,7 @@ bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept
 	return open;
 }
 
-void Box::SyncMaterial(Graphics& gfx) noexcept(!IS_DEBUG)
+void Box::SyncMaterial(Graphics& gfx) noxnd
 {
 	// get material constant buffer
 	auto pConstPS = QueryBindable<MaterialCbuf>();

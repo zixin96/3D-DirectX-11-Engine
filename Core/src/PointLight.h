@@ -12,7 +12,7 @@ public:
 	PointLight(Graphics& gfx, float radius = 0.5f);
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
-	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
+	void Draw(Graphics& gfx) const noxnd;
 
 	// since we do lighting computation in camera space, we need to pass in view matrix 
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept;

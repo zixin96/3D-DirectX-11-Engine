@@ -16,14 +16,14 @@ protected:
 		return !staticBinds_.empty();
 	}
 
-	static void AddStaticBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG)
+	static void AddStaticBind(std::unique_ptr<Bindable> bind) noxnd
 	{
 		assert("*Must* use AddStaticIndexBuffer to bind index buffer" && typeid(*bind) != typeid(IndexBuffer));
 		staticBinds_.push_back(std::move(bind));
 	}
 
 	// this function is not static b/c we need to access per-instance index buffer pointer
-	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept(!IS_DEBUG)
+	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noxnd
 	{
 		assert("Attempting to add index buffer a second time" && pIndexBuffer_ == nullptr);
 		pIndexBuffer_ = ibuf.get();
@@ -31,7 +31,7 @@ protected:
 	}
 
 	// this function is used to set the index buffer pointer of the instances created after the first instance
-	void SetIndexFromStatic() noexcept(!IS_DEBUG)
+	void SetIndexFromStatic() noxnd
 	{
 		assert("Attempting to add index buffer a second time" && pIndexBuffer_ == nullptr);
 		for (const auto& b : staticBinds_)

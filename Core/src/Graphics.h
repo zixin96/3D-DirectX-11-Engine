@@ -2,6 +2,7 @@
 #include "Utils/WinHelper.h"
 #include "Debug/DXException.h"
 #include "Debug/DxgiInfoManager.h"
+#include "Debug/ConditionalNoexcept.h"
 
 #include <d3d11.h>
 #include <wrl.h>
@@ -71,7 +72,7 @@ public:
 
 	~Graphics();
 
-	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void DrawIndexed(UINT count) noxnd;
 
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
