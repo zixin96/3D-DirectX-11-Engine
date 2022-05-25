@@ -12,58 +12,13 @@
 class Bindable;
 
 /**
- * \brief Represents graphical output
+ * \brief This class wraps all necessary D3D objects for rendering
  */
 class Graphics
 {
 	// Bindable now have access to private member of Graphics class (like device pointer)
 	friend class Bindable;
 public:
-	// Basic graphics Exception
-	class Exception : public DXException
-	{
-		using DXException::DXException;
-	};
-
-	// Graphics exception with HRESULT
-	class HrException : public Exception
-	{
-	public:
-		HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		HRESULT GetErrorCode() const noexcept;
-		std::string GetErrorString() const noexcept;
-		std::string GetErrorDescription() const noexcept;
-		// Get Debug Layer message
-		std::string GetErrorInfo() const noexcept;
-	private:
-		HRESULT hr_;
-		std::string info_;
-	};
-
-	// A specialized HrException
-	class DeviceRemovedException : public HrException
-	{
-		using HrException::HrException;
-	public:
-		const char* GetType() const noexcept override;
-	private:
-		std::string reason_;
-	};
-
-	// Exception for functions that don't return HRESULT
-	class InfoException : public Exception
-	{
-	public:
-		InfoException(int line, const char* file, std::vector<std::string> infoMsgs = {}) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		std::string GetErrorInfo() const noexcept;
-	private:
-		std::string info_;
-	};
-
 	Graphics(HWND hWnd, int width, int height);
 
 	// we don't want to copy/move Graphics object
@@ -101,13 +56,57 @@ private:
 	DirectX::XMMATRIX projection_;
 	DirectX::XMMATRIX camera_;
 
-#ifndef NDEBUG
+#ifdef DX_DEBUG
 	DxgiInfoManager infoManager_;
 #endif
 
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice_;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap_;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext_;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget_;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV_;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain_;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext_;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView_;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView_;
+
+public:
+	// Basic graphics Exception
+	class Exception : public DXException
+	{
+		using DXException::DXException;
+	};
+
+	// Graphics exception with HRESULT
+	class HrException : public Exception
+	{
+	public:
+		HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
+		const char* what() const noexcept override;
+		const char* GetType() const noexcept override;
+		HRESULT GetErrorCode() const noexcept;
+		std::string GetErrorString() const noexcept;
+		std::string GetErrorDescription() const noexcept;
+		// Get Debug Layer message
+		std::string GetErrorInfo() const noexcept;
+	private:
+		HRESULT hr_;
+		std::string info_;
+	};
+
+	// A specialized HrException
+	class DeviceRemovedException : public HrException
+	{
+		using HrException::HrException;
+	public:
+		const char* GetType() const noexcept override;
+	};
+
+	// Exception for functions that don't return HRESULT
+	class InfoException : public Exception
+	{
+	public:
+		InfoException(int line, const char* file, std::vector<std::string> infoMsgs = {}) noexcept;
+		const char* what() const noexcept override;
+		const char* GetType() const noexcept override;
+		std::string GetErrorInfo() const noexcept;
+	private:
+		std::string info_;
+	};
 };

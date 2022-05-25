@@ -233,7 +233,7 @@ std::optional<int> DXWindow::ProcessMessages()
 	return {};
 }
 
-Graphics& DXWindow::GetGraphics()
+Graphics& DXWindow::Gfx()
 {
 	if (!pGfx_)
 	{
@@ -358,7 +358,7 @@ LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 				// if the mouse is not previously in the window: 
 				if (!mouse_.IsInWindow())
 				{
-					// capture the mouse
+					// capture the mouse: as long as mouse is captured, even if the mouse leaves the window region, we still going to receive mouse move events
 					SetCapture(hWnd);
 					// log enter event
 					mouse_.OnMouseEnter();

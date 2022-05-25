@@ -6,7 +6,7 @@
 #define GFX_EXCEPT_NOINFO(hr) Graphics::HrException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
 
-#ifndef NDEBUG
+#ifdef DX_DEBUG
 #define GFX_EXCEPT(hr) Graphics::HrException( __LINE__,__FILE__,(hr),infoManager_.GetMessages() )
 #define GFX_THROW_INFO(hrcall) infoManager_.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager_.GetMessages() )
@@ -20,7 +20,7 @@
 
 // macro for importing infomanager into local scope
 // this.GetInfoManager(Graphics& gfx) must exist
-#ifdef NDEBUG
+#ifndef DX_DEBUG
 #define INFOMAN(gfx) HRESULT hr
 #else
 #define INFOMAN(gfx) HRESULT hr; DxgiInfoManager& infoManager_ = GetInfoManager((gfx))

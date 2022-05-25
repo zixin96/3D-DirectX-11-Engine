@@ -14,32 +14,36 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	// ---------------Swap Chain and Device Creation Stage--------------------------
 	// Describes a swap chain
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	// automatically configure the buffer width/height based on window
+	// describes the backbuffer display mode
 	sd.BufferDesc.Width = width;
 	sd.BufferDesc.Height = height;
+	// layout of the pixels
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	// since we're not doing fullscreen, leave refresh rate as 0
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
+	// no scaling required
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	// no ordering required
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	// describes multi-sampling parameters
 	// No anti-aliasing for now
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	// use this buffer as render target
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	// double buffering: set buffer count to 1
-	// Note: we change it to 2
+	// Use double-buffering to minimize latency
 	sd.BufferCount = 2;
 	// specify our window handle
 	sd.OutputWindow = hWnd;
 	sd.Windowed = TRUE;
-	// Note: we change it from DXGI_SWAP_EFFECT_DISCARD to DXGI_SWAP_EFFECT_FLIP_DISCARD (to get rid of error info)
+	// use a flip effect
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	sd.Flags = 0;
 
 	UINT swapCreateFlags = 0u;
 
-#ifndef NDEBUG
+#ifdef DX_DEBUG
 	swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
@@ -47,39 +51,45 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	// remember to create a HRESULT before adding those macros
 	HRESULT hr;
 
-	// create device and front/back buffers, and swap chain and rendering context
+	// Creates a device that represents the display adapter and
+	// a swap chain used for rendering
 	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
-		// choose default adapter
+		// A pointer to the video adapter to use when creating a device
+		// Pass NULL to use the default adapter
 		nullptr,
+		// the driver type to create
 		D3D_DRIVER_TYPE_HARDWARE,
-		// no software driver needed
+		// A handle to a DLL that implements a software rasterizer
 		nullptr,
 		// Add debug layer if in debug mode
 		swapCreateFlags,
 		// no specific feature levels specified
 		nullptr,
+		// no feature levels
 		0,
 		// targeting D3D11
 		D3D11_SDK_VERSION,
 		// swap chain descriptor
 		&sd,
-		&pSwap_,
+		&pSwapChain_,
 		&pDevice_,
-		// no feature level
+		// we don't need to determine which feature level is supported
 		nullptr,
-		&pContext_
+		&pDeviceContext_
 	));
 	// ------------End Swap Chain and Device Creation Stage--------------------------
 
 
-	// ---------------Retrieve Render Target View Stage--------------------------
+	// ---------------Retrieve Render Target View--------------------------
 	// gain access to texture subresource in swap chain (back buffer)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 
-	GFX_THROW_INFO(pSwap_->GetBuffer(
+	GFX_THROW_INFO(pSwapChain_->GetBuffer(
 		// the index of the buffer we're getting (back buffer has index 0)
 		0,
+		// The type of interface used to manipulate the buffer
 		__uuidof(ID3D11Resource),
+		// A pointer to a back-buffer interface
 		&pBackBuffer));
 
 	GFX_THROW_INFO(pDevice_->CreateRenderTargetView(
@@ -88,9 +98,9 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 		// no additional configuration yet
 		nullptr,
 		// output render view handle
-		&pTarget_
+		&pRenderTargetView_
 	));
-	// ------------End Retrieve Render Target View Stage--------------------------
+	// ------------End Retrieve Render Target View--------------------------
 
 
 	// ------------Depth stencil Creation Stage--------------------------
@@ -107,7 +117,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	GFX_THROW_INFO(pDevice_->CreateDepthStencilState(&dsDesc, &pDSState));
 
 	// bind depth state
-	pContext_->OMSetDepthStencilState(pDSState.Get(), 1u);
+	pDeviceContext_->OMSetDepthStencilState(pDSState.Get(), 1u);
 
 	// create depth stensil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -140,12 +150,12 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	};
 
 	GFX_THROW_INFO(pDevice_->CreateDepthStencilView(
-		pDepthStencil.Get(), &descDSV, &pDSV_));
+		pDepthStencil.Get(), &descDSV, &pDepthStencilView_));
 	// ---------End Depth stencil Creation Stage--------------------------
 
 
 	// ---------Bind Render target and Depth Stencil Stage--------------------------
-	pContext_->OMSetRenderTargets(1u, pTarget_.GetAddressOf(), pDSV_.Get());
+	pDeviceContext_->OMSetRenderTargets(1u, pRenderTargetView_.GetAddressOf(), pDepthStencilView_.Get());
 	// -------End Bind Render target and Depth Stencil Stage--------------------------
 
 
@@ -165,7 +175,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 		.MaxDepth = 1,
 	};
 	// Bind an array of viewports to the rasterizer stage of the pipeline
-	pContext_->RSSetViewports(
+	pDeviceContext_->RSSetViewports(
 		// Number of viewports to bind
 		1u,
 		// An array of D3D11_VIEWPORT structures to bind to the device
@@ -173,7 +183,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	// ----------------------End Viewport Stage----------------------------------
 
 	// init imgui d3d impl
-	ImGui_ImplDX11_Init(pDevice_.Get(), pContext_.Get());
+	ImGui_ImplDX11_Init(pDevice_.Get(), pDeviceContext_.Get());
 }
 
 Graphics::~Graphics()
@@ -182,11 +192,11 @@ Graphics::~Graphics()
 	ImGui_ImplDX11_Shutdown();
 }
 
-void Graphics::DrawIndexed(UINT count) noexcept(!true)
+void Graphics::DrawIndexed(UINT count) noxnd
 {
 	// Using flip mode means that we have to rebind render targets every frame
-	pContext_->OMSetRenderTargets(1u, pTarget_.GetAddressOf(), pDSV_.Get());
-	GFX_THROW_INFO_ONLY(pContext_->DrawIndexed(count, 0u, 0u));
+	pDeviceContext_->OMSetRenderTargets(1u, pRenderTargetView_.GetAddressOf(), pDepthStencilView_.Get());
+	GFX_THROW_INFO_ONLY(pDeviceContext_->DrawIndexed(count, 0u, 0u));
 }
 
 void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
@@ -220,8 +230,8 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 	}
 
 	const float color[] = {red, green, blue, 1.0f};
-	pContext_->ClearRenderTargetView(pTarget_.Get(), color);
-	pContext_->ClearDepthStencilView(pDSV_.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	pDeviceContext_->ClearRenderTargetView(pRenderTargetView_.Get(), color);
+	pDeviceContext_->ClearDepthStencilView(pDepthStencilView_.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void Graphics::EndFrame()
@@ -236,15 +246,16 @@ void Graphics::EndFrame()
 	HRESULT hr;
 
 	// retrieve the latest debug message
-#ifndef NDEBUG
+#ifdef DX_DEBUG
 	infoManager_.Set();
 #endif
 
 	// present the backbuffer (flip/swap)
-	if (FAILED(hr = pSwap_->Present(
+	if (FAILED(hr = pSwapChain_->Present(
 		// target frame rate: machine frame rate
 		// PS: 2u means targeting half the machine frame rate
 		1u,
+		// no flags
 		0u)))
 	{
 		// Present function can give you a special error code
@@ -278,8 +289,8 @@ bool Graphics::IsImguiEnabled() const noexcept
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = {red, green, blue, 1.0f};
-	pContext_->ClearRenderTargetView(pTarget_.Get(), color);
-	pContext_->ClearDepthStencilView(pDSV_.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	pDeviceContext_->ClearRenderTargetView(pRenderTargetView_.Get(), color);
+	pDeviceContext_->ClearDepthStencilView(pDepthStencilView_.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 /*void Graphics::Draw13_First_Triangle()
@@ -1519,6 +1530,8 @@ std::string Graphics::HrException::GetErrorInfo() const noexcept
 {
 	return info_;
 }
+
+// -----------------------------------------------------------------
 
 const char* Graphics::DeviceRemovedException::GetType() const noexcept
 {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Debug/DXException.h"
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "DXKeyboard.h"
+#include "DXMouse.h"
 #include "Graphics.h"
 
 /**
@@ -74,10 +74,10 @@ public:
 	DXWindow& operator=(const DXWindow&) = delete;
 	void SetTitle(const std::string& title);
 	static std::optional<int> ProcessMessages();
-	Graphics& GetGraphics();
+	Graphics& Gfx();
 
-	Keyboard kbd_;
-	Mouse mouse_;
+	DXKeyboard kbd_;
+	DXMouse mouse_;
 private:
 	// since we cannot pass member function to Win32 directly,
 	// we need to setup the following 2 static functions to pass messages to our member function

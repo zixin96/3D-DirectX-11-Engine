@@ -3,7 +3,7 @@
 /**
  * \brief A class that encapsulates access to the mouse input
  */
-class Mouse
+class DXMouse
 {
 	friend class DXWindow;
 public:
@@ -43,7 +43,7 @@ public:
 		{
 		}
 
-		Event(Type type, const Mouse& parent) noexcept
+		Event(Type type, const DXMouse& parent) noexcept
 			:
 			type_(type),
 			leftIsPressed_(parent.leftIsPressed_),
@@ -89,11 +89,10 @@ public:
 		}
 	};
 
-public:
-	Mouse() = default;
+	DXMouse() = default;
 
-	Mouse(const Mouse&) = delete;
-	Mouse& operator=(const Mouse&) = delete;
+	DXMouse(const DXMouse&) = delete;
+	DXMouse& operator=(const DXMouse&) = delete;
 
 	std::pair<int, int> GetPos() const noexcept;
 	int GetPosX() const noexcept;

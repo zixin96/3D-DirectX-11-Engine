@@ -14,5 +14,5 @@ protected:
 	// children of Bindable will have access to Graphics' private member variables through these static functions:
 	static ID3D11DeviceContext* GetContext(Graphics& gfx) noexcept;
 	static ID3D11Device* GetDevice(Graphics& gfx) noexcept;
-	static DxgiInfoManager& GetInfoManager(Graphics& gfx) noxnd;
+	static DxgiInfoManager& GetInfoManager(Graphics& gfx);
 };

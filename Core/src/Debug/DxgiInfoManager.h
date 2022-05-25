@@ -2,8 +2,10 @@
 #include "Utils/WinHelper.h"
 #include <wrl.h>
 #include <dxgidebug.h>
+
 /**
- * \brief DxgiInfoManager class retrieves information coming out of D3D debug layer so that we can pass them to our debug window 
+ * \brief DxgiInfoManager class retrieves information coming out of D3D debug layer
+ * programatically, so that we can pass them to our debug window 
  */
 class DxgiInfoManager
 {

@@ -18,7 +18,7 @@ set(APP_ICON_RESOURCE_WINDOWS "src/WindowsResource/appico.rc")
 add_executable(${PROJECT_NAME} WIN32 ${SRC_FILES} ${HEADER_FILES} ${APP_ICON_RESOURCE_WINDOWS})
 if(MSVC)
     # from chili tutorial: we want multiprocessor compilation and fast code 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:IS_DEBUG=true> $<$<CONFIG:Release>:IS_DEBUG=false>)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:IS_DEBUG=true> $<$<CONFIG:Release>:IS_DEBUG=false> $<$<CONFIG:Debug>:DX_DEBUG>)
     target_compile_options(${PROJECT_NAME} PRIVATE "/MP" "/Ot" "/fp:fast")
     # for convenience: we don't need Microsoft C++ runtime to run the project
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
@@ -86,4 +86,5 @@ set(HEADER_PCH_FILES
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${HEADER_PCH_FILES})
 
 # link necessary d3d libs
+# you could also insert #pragma comment(lib,"d3d11.lib") in the code
 target_link_libraries(${PROJECT_NAME} d3d11.lib D3DCompiler.lib dxguid.lib gdiplus.lib assimp)

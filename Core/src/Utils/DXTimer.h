@@ -3,10 +3,10 @@
 /**
  * \brief A wrapper around std::chrono
  */
-class Timer
+class DXTimer
 {
 public:
-	Timer() noexcept;
+	DXTimer() noexcept;
 	float Mark() noexcept;
 	float Peek() const noexcept;
 private:

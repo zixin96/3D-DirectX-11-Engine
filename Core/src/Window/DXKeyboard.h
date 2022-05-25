@@ -3,7 +3,7 @@
 /**
  * \brief A class that encapsulates access to the keyboard input
  */
-class Keyboard
+class DXKeyboard
 {
 	// "friend" the Window will gives Window access to Keyboard's private functions
 	friend class DXWindow;
@@ -58,10 +58,10 @@ public:
 	};
 
 
-	Keyboard() = default;
+	DXKeyboard() = default;
 
-	Keyboard(const Keyboard&) = delete;
-	Keyboard& operator=(const Keyboard&) = delete;
+	DXKeyboard(const DXKeyboard&) = delete;
+	DXKeyboard& operator=(const DXKeyboard&) = delete;
 
 	// key event stuff
 
