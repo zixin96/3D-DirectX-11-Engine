@@ -10,6 +10,7 @@ GDIPlusManager gdipm;
 
 App::App()
 	:
+	// Please specify a resolution with aspect ratio = 16:9
 	wnd_(1920, 1080, "The Donkey Fart Box"),
 	light_(wnd_.GetGraphics())
 {
@@ -46,14 +47,15 @@ void App::ShowImguiDemoWindow()
 }
 
 App::~App()
-{}
+{
+}
 
 int App::Go()
 {
 	while (true)
 	{
 		// process all pending messages, but do not block if there are no messages to process
-		if (const auto ecode = Window::ProcessMessages())
+		if (const auto ecode = DXWindow::ProcessMessages())
 		{
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;
@@ -61,5 +63,3 @@ int App::Go()
 		DoFrame();
 	}
 }
-
-

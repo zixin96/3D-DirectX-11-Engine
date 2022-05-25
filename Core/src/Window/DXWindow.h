@@ -8,8 +8,32 @@
 /**
  * \brief A class that encapsulates access to Win32 windows
  */
-class Window
+class DXWindow
 {
+private:
+	/**
+	 * \brief A private singleton class that manages registration/cleanup of window class
+	 * The static instance will be created when the program first starts
+	 */
+	class WindowClass
+	{
+	public:
+		static const char* GetName() noexcept;
+		static HINSTANCE GetInstance() noexcept;
+	private:
+		static WindowClass wndClass_;
+
+		WindowClass() noexcept;
+		~WindowClass();
+
+		// since WindowClass is a singleton, we disallow copying
+		WindowClass(const WindowClass&) = delete;
+		WindowClass& operator=(const WindowClass&) = delete;
+
+		static constexpr const char* wndClassName_ = "Direct3D Engine Window";
+		HINSTANCE hInst_;
+	};
+
 public:
 	class Exception : public DXException
 	{
@@ -39,39 +63,14 @@ public:
 		// Note: there is no HRESULT associated with this kind of exception
 	};
 
-private:
-	/**
-	 * \brief A private singleton class that manages registration/cleanup of window class
-	 */
-	class WindowClass
-	{
-	public:
-		static const char* GetName() noexcept;
-		static HINSTANCE GetInstance() noexcept;
-	private:
-		WindowClass() noexcept;
-		~WindowClass();
+	// -------------------------------------------------------------------------
 
-		// since WindowClass is a singleton, we disallow copying
-		WindowClass(const WindowClass&) = delete;
-		WindowClass& operator=(const WindowClass&) = delete;
-
-		static constexpr const char* wndClassName_ = "Direct3D Engine Window";
-
-		// since we use singleton for window class, we declare a static instance for this class,
-		// which will be created when the program starts
-		static WindowClass wndClass_;
-
-		HINSTANCE hInst_;
-	};
-
-public:
-	Window(int width, int height, const char* name);
-	~Window();
+	DXWindow(int width, int height, const char* name);
+	~DXWindow();
 
 	// assume we only have one window class, so we disallow copying
-	Window(const Window&) = delete;
-	Window& operator=(const Window&) = delete;
+	DXWindow(const DXWindow&) = delete;
+	DXWindow& operator=(const DXWindow&) = delete;
 	void SetTitle(const std::string& title);
 	static std::optional<int> ProcessMessages();
 	Graphics& GetGraphics();
@@ -95,4 +94,3 @@ private:
 	// (b/c it can only be created after the window is initialized)
 	std::unique_ptr<Graphics> pGfx_;
 };
-

@@ -5,7 +5,7 @@
  */
 class Mouse
 {
-	friend class Window;
+	friend class DXWindow;
 public:
 	class Event
 	{

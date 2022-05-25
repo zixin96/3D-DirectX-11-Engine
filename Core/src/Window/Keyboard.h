@@ -6,7 +6,7 @@
 class Keyboard
 {
 	// "friend" the Window will gives Window access to Keyboard's private functions
-	friend class Window;
+	friend class DXWindow;
 public:
 	class Event
 	{

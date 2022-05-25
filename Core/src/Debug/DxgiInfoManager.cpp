@@ -1,5 +1,5 @@
 #include "DxgiInfoManager.h"
-#include "Window/Window.h"
+#include "Window/DXWindow.h"
 #include "Graphics.h"
 #include "WindowsThrowMacros.h"
 #include "GraphicsThrowMacros.h"

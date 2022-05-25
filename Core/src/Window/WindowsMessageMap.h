@@ -12,5 +12,5 @@ public:
 	std::string operator()(DWORD msg, LPARAM lp, WPARAM wp) const;
 private:
 	// map Window Message ID to a string that represents the message
-	std::unordered_map<DWORD, std::string> map;
+	std::unordered_map<DWORD, std::string> map_;
 };

@@ -1,6 +1,6 @@
 #pragma once
 // TODO: Change this window file name
-#include "Window/Window.h"
+#include "Window/DXWindow.h"
 #include "Utils/Timer.h"
 #include "Imgui/ImguiManager.h"
 #include "Camera.h"
@@ -19,7 +19,7 @@ private:
 	void ShowImguiDemoWindow();
 
 	ImguiManager imgui_;
-	Window wnd_;
+	DXWindow wnd_;
 	Timer timer_;
 	float speedFactor_ = 1.0f;
 	Camera cam_;

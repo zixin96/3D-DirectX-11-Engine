@@ -1,7 +1,7 @@
 #pragma once
 
 // error exception helper macro
-#define WND_EXCEPT( hr ) Window::HrException( __LINE__,__FILE__,(hr) )
+#define WND_EXCEPT( hr ) DXWindow::HrException( __LINE__,__FILE__,(hr) )
 // some errors require you to GetLastError() to retrieve the error
-#define WND_LAST_EXCEPT() Window::HrException( __LINE__,__FILE__,GetLastError() )
-#define WND_NOGFX_EXCEPT() Window::NoGfxException( __LINE__,__FILE__ )
+#define WND_LAST_EXCEPT() DXWindow::HrException( __LINE__,__FILE__,GetLastError() )
+#define WND_NOGFX_EXCEPT() DXWindow::NoGfxException( __LINE__,__FILE__ )

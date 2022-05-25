@@ -14,7 +14,7 @@
 
 WindowsMessageMap::WindowsMessageMap()
 	:
-	map({
+	map_({
 		REGISTER_MESSAGE(WM_CREATE),
 		REGISTER_MESSAGE(WM_DESTROY),
 		REGISTER_MESSAGE(WM_MOVE),
@@ -209,10 +209,10 @@ WindowsMessageMap::WindowsMessageMap()
 std::string WindowsMessageMap::operator()(DWORD msg, LPARAM lp, WPARAM wp) const
 {
 	constexpr int firstColWidth = 25;
-	const auto i = map.find(msg);
+	const auto i = map_.find(msg);
 
 	std::ostringstream oss;
-	if (i != map.end())
+	if (i != map_.end())
 	{
 		oss << std::left << std::setw(firstColWidth) << i->second << std::right;
 	}

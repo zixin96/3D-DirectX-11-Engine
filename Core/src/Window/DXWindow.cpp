@@ -1,18 +1,19 @@
-#include "Window.h"
+#include "DXWindow.h"
 #include "WindowsResource/resource.h"
 #include "Debug/WindowsThrowMacros.h"
 #include "backends/imgui_impl_win32.h"
 
+// put it here (instructed by IMGUI's developers)
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept
+DXWindow::HrException::HrException(int line, const char* file, HRESULT hr) noexcept
 	:
 	Exception(line, file),
 	hr_(hr)
 {
 }
 
-const char* Window::HrException::what() const noexcept
+const char* DXWindow::HrException::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -24,17 +25,17 @@ const char* Window::HrException::what() const noexcept
 	return whatBuffer_.c_str();
 }
 
-const char* Window::HrException::GetType() const noexcept
+const char* DXWindow::HrException::GetType() const noexcept
 {
 	return "Window HrException";
 }
 
-HRESULT Window::HrException::GetErrorCode() const noexcept
+HRESULT DXWindow::HrException::GetErrorCode() const noexcept
 {
 	return hr_;
 }
 
-std::string Window::HrException::GetErrorDescription() const noexcept
+std::string DXWindow::HrException::GetErrorDescription() const noexcept
 {
 	return TranslateErrorCode(hr_);
 }
@@ -47,7 +48,7 @@ std::string Window::HrException::GetErrorDescription() const noexcept
  * \param hr A windows error code
  * \return A description string from the error code
  */
-std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+std::string DXWindow::Exception::TranslateErrorCode(HRESULT hr) noexcept
 {
 	char* pMsgBuf = nullptr;
 	// windows will allocate memory for err string and make our pointer point to it
@@ -76,7 +77,7 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 // ------------------------------------------------------------------------------
 
 
-const char* Window::NoGfxException::GetType() const noexcept
+const char* DXWindow::NoGfxException::GetType() const noexcept
 {
 	return "Window Exception [No Graphics]";
 }
@@ -85,12 +86,14 @@ const char* Window::NoGfxException::GetType() const noexcept
 // ------------------------------------------------------------------------------
 
 
-Window::WindowClass Window::WindowClass::wndClass_;
+// since we use singleton for window class, we declare a static instance for this class,
+// which will be created when the program starts
+DXWindow::WindowClass DXWindow::WindowClass::wndClass_;
 
 /**
  * \brief Register WinAPI window class
  */
-Window::WindowClass::WindowClass() noexcept
+DXWindow::WindowClass::WindowClass() noexcept
 	:
 	// retrieve instance handle
 	hInst_(GetModuleHandle(nullptr))
@@ -104,17 +107,17 @@ Window::WindowClass::WindowClass() noexcept
 
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = GetInstance();
+	wc.hInstance = hInst_;
 	wc.hIcon = static_cast<HICON>(LoadImage(
-		GetInstance(), MAKEINTRESOURCE(IDI_ICON1),
+		hInst_, MAKEINTRESOURCE(IDI_ICON1),
 		IMAGE_ICON, 32, 32, 0
 	));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr;
-	wc.lpszClassName = GetName();
+	wc.lpszClassName = wndClassName_;
 	wc.hIconSm = static_cast<HICON>(LoadImage(
-		GetInstance(), MAKEINTRESOURCE(IDI_ICON1),
+		hInst_, MAKEINTRESOURCE(IDI_ICON1),
 		IMAGE_ICON, 16, 16, 0
 	));
 	RegisterClassEx(&wc);
@@ -123,17 +126,17 @@ Window::WindowClass::WindowClass() noexcept
 /**
  * \brief Deregister WinAPI window class
  */
-Window::WindowClass::~WindowClass()
+DXWindow::WindowClass::~WindowClass()
 {
-	UnregisterClass(wndClassName_, GetInstance());
+	UnregisterClass(wndClassName_, hInst_);
 }
 
-const char* Window::WindowClass::GetName() noexcept
+const char* DXWindow::WindowClass::GetName() noexcept
 {
 	return wndClassName_;
 }
 
-HINSTANCE Window::WindowClass::GetInstance() noexcept
+HINSTANCE DXWindow::WindowClass::GetInstance() noexcept
 {
 	return wndClass_.hInst_;
 }
@@ -141,7 +144,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 // ------------------------------------------------------------------------------
 
-Window::Window(int width, int height, const char* name)
+DXWindow::DXWindow(int width, int height, const char* name)
 	: width_(width), height_(height)
 {
 	// specify desired client region size
@@ -194,13 +197,13 @@ Window::Window(int width, int height, const char* name)
 	pGfx_ = std::make_unique<Graphics>(hWnd_, width, height);
 }
 
-Window::~Window()
+DXWindow::~DXWindow()
 {
 	ImGui_ImplWin32_Shutdown();
 	DestroyWindow(hWnd_);
 }
 
-void Window::SetTitle(const std::string& title)
+void DXWindow::SetTitle(const std::string& title)
 {
 	if (SetWindowText(hWnd_, title.c_str()) == 0)
 	{
@@ -208,7 +211,7 @@ void Window::SetTitle(const std::string& title)
 	}
 }
 
-std::optional<int> Window::ProcessMessages()
+std::optional<int> DXWindow::ProcessMessages()
 {
 	MSG msg;
 	// while queue has messages (PeekMessage returns != 0), remove and dispatch them (but do not block on empty queue)
@@ -230,7 +233,7 @@ std::optional<int> Window::ProcessMessages()
 	return {};
 }
 
-Graphics& Window::GetGraphics()
+Graphics& DXWindow::GetGraphics()
 {
 	if (!pGfx_)
 	{
@@ -240,7 +243,7 @@ Graphics& Window::GetGraphics()
 }
 
 // this installation function is only for setting up pointers to our instance on Win32 side
-LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+LRESULT WINAPI DXWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	// we use WM_NCCREATE to extract our own Window class pointer
 	if (msg == WM_NCCREATE)
@@ -250,12 +253,12 @@ LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// retrieve CREATESTRUCTW* from WM_NCCREATE's lParam
 		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
 		// use CREATESTRUCTW* to retrieve our own Window class pointer
-		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+		DXWindow* const pWnd = static_cast<DXWindow*>(pCreate->lpCreateParams);
 
 		// set WinAPI-managed user data to store ptr to window class
 		SetWindowLongPtr(hWnd,GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		// set message proc to normal (non-setup) handler now that setup is finished
-		SetWindowLongPtr(hWnd,GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
+		SetWindowLongPtr(hWnd,GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DXWindow::HandleMsgThunk));
 		// forward message to window class handler
 		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 	}
@@ -264,22 +267,23 @@ LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 }
 
 // this function redirects messages to our own member function
-LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+LRESULT WINAPI DXWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	// retrieve ptr to window class
-	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
+	DXWindow* const pWnd = reinterpret_cast<DXWindow*>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
 	// forward message to window class handler
 	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
 // this is our actual message handler
-LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	// Imgui has the top priority to receive win32 messages 
+	// IMGUI (which has the top priority to receive win32 messages) handles the win32 messages here: 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 	{
 		return true;
 	}
+
 	const auto imio = ImGui::GetIO();
 
 	switch (msg)
@@ -338,7 +342,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_MOUSEMOVE:
 		{
 			// stifle this keyboard message if imgui wants to capture
-			if (imio.WantCaptureKeyboard)
+			if (imio.WantCaptureMouse)
 			{
 				break;
 			}
