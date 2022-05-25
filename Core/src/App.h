@@ -1,5 +1,4 @@
 #pragma once
-// TODO: Change this window file name
 #include "Window/DXWindow.h"
 #include "Utils/DXTimer.h"
 #include "Imgui/ImguiManager.h"

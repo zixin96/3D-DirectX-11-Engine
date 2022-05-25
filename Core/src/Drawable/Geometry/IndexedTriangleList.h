@@ -15,6 +15,7 @@ public:
 		assert(indices_.size() % 3 == 0);
 	}
 
+	// apply transformation to the vertices in the model
 	void Transform(DirectX::FXMMATRIX matrix)
 	{
 		for (auto& v : vertices_)

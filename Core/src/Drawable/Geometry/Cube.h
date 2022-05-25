@@ -1,7 +1,6 @@
 #pragma once
 #include "IndexedTriangleList.h"
 
-
 class Cube
 {
 public:
@@ -13,18 +12,18 @@ public:
 
 		constexpr float side = 1.0f / 2.0f;
 
-		std::vector<V> vertices_(8);
-		vertices_[0].pos = {-side, -side, -side};
-		vertices_[1].pos = {side, -side, -side};
-		vertices_[2].pos = {-side, side, -side};
-		vertices_[3].pos = {side, side, -side};
-		vertices_[4].pos = {-side, -side, side};
-		vertices_[5].pos = {side, -side, side};
-		vertices_[6].pos = {-side, side, side};
-		vertices_[7].pos = {side, side, side};
+		std::vector<V> vertices(8);
+		vertices[0].pos = {-side, -side, -side};
+		vertices[1].pos = {side, -side, -side};
+		vertices[2].pos = {-side, side, -side};
+		vertices[3].pos = {side, side, -side};
+		vertices[4].pos = {-side, -side, side};
+		vertices[5].pos = {side, -side, side};
+		vertices[6].pos = {-side, side, side};
+		vertices[7].pos = {side, side, side};
 
 		return {
-			std::move(vertices_), {
+			std::move(vertices), {
 				0, 2, 1, 2, 3, 1,
 				1, 3, 5, 3, 7, 5,
 				2, 6, 3, 3, 6, 7,
