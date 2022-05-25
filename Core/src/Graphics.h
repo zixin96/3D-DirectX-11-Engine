@@ -43,13 +43,6 @@ public:
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
 
-	void Draw13_First_Triangle();
-
-	void Draw14_15_Pipeline_Experiments_And_DirectXMath(float angle, float x, float y);
-
-	void Draw16_Cube(float angle, float x, float z);
-	void Draw16_Cube_2(float angle, float x, float z);
-
 private:
 	bool imguiEnabled_ = true;
 
