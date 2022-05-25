@@ -3,8 +3,8 @@
 #include "Utils/EngineMath.h"
 
 /**
- * \brief This class abstracts parameters that drawable shares
- * \tparam T Drawable objects
+ * \brief This class abstracts parameters that our test geometry drawable shares
+ * \tparam T Test Drawable objects
  */
 template <class T>
 class TestObject : public DrawableCommon<T>

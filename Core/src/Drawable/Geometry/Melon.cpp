@@ -12,17 +12,7 @@ Melon::Melon(Graphics& gfx,
              std::uniform_real_distribution<float>& rdist,
              std::uniform_int_distribution<int>& longdist,
              std::uniform_int_distribution<int>& latdist)
-	:
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dphi(odist(rng)),
-	dtheta(odist(rng)),
-	dchi(odist(rng)),
-	chi(adist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng))
+	: TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
 	namespace dx = DirectX;
 
@@ -82,22 +72,4 @@ Melon::Melon(Graphics& gfx,
 	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices_));
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
-}
-
-void Melon::Update(float dt) noexcept
-{
-	roll += droll * dt;
-	pitch += dpitch * dt;
-	yaw += dyaw * dt;
-	theta += dtheta * dt;
-	phi += dphi * dt;
-	chi += dchi * dt;
-}
-
-DirectX::XMMATRIX Melon::GetTransformXM() const noexcept
-{
-	namespace dx = DirectX;
-	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }

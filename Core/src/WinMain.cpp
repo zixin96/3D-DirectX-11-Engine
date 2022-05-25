@@ -1,4 +1,5 @@
 #include "App.h"
+#include "AppAssortment.h"
 #include "Window/DXWindow.h"
 
 // In this demo, 
@@ -11,7 +12,8 @@ int WINAPI WinMain(
 {
 	try
 	{
-		App{}.Go();
+		// App{}.Go();
+		AppAssortment{}.Go();
 	}
 	// catch engine Exception
 	catch (const DXException& e)
