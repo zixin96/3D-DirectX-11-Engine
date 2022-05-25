@@ -49,7 +49,7 @@ Box::Box(Graphics& gfx,
 	}
 	else
 	{
-		// non-static initialization should set the index buffer 
+		// non-static initialization should set the index buffer
 		SetIndexFromStatic();
 	}
 

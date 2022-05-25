@@ -7,7 +7,7 @@
  * \tparam T Drawable objects
  */
 template <class T>
-class TestObject : public DrawableBase<T>
+class TestObject : public DrawableCommon<T>
 {
 public:
 	TestObject(Graphics& gfx, std::mt19937& rng,

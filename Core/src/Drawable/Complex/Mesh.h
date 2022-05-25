@@ -20,7 +20,7 @@ private:
 	std::string note;
 };
 
-class Mesh : public DrawableBase<Mesh>
+class Mesh : public DrawableCommon<Mesh>
 {
 public:
 	Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindPtrs);

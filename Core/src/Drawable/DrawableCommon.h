@@ -3,11 +3,12 @@
 #include "Bindable/IndexBuffer.h"
 
 /**
- * \brief 
- * \tparam T 
+ * \brief DrawableCommon holds the common/static bindables that are not changed across instances of a Drawable
+ * Every drawable should inherit from this class
+ * \tparam T Templated type (Mesh, Box, etc.) so that each drawable has separate static binds data. 
  */
 template <class T>
-class DrawableBase : public Drawable
+class DrawableCommon : public Drawable
 {
 protected:
 	static bool IsStaticInitialized() noexcept
@@ -56,4 +57,4 @@ private:
 };
 
 template <class T>
-std::vector<std::unique_ptr<Bindable>> DrawableBase<T>::staticBinds_;
+std::vector<std::unique_ptr<Bindable>> DrawableCommon<T>::staticBinds_;

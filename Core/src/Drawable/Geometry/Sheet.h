@@ -1,7 +1,7 @@
 #pragma once
 #include "Drawable/DrawableCommon.h"
 
-class Sheet : public DrawableBase<Sheet>
+class Sheet : public DrawableCommon<Sheet>
 {
 public:
 	Sheet(Graphics& gfx, std::mt19937& rng,

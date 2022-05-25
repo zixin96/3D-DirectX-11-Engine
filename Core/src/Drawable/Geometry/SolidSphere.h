@@ -4,7 +4,7 @@
 /**
  * \brief SolidSphere that currently represents our ligth source
  */
-class SolidSphere : public DrawableBase<SolidSphere>
+class SolidSphere : public DrawableCommon<SolidSphere>
 {
 public:
 	SolidSphere(Graphics& gfx, float radius);

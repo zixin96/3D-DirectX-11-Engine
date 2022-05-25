@@ -4,12 +4,13 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 	:
 	parent_(parent)
 {
-	if (!pVcbuf_)
+	if (!pVertexCbuf_)
 	{
-		pVcbuf_ = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
+		pVertexCbuf_ = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
 	}
 }
 
+// update and bind vertex constant buffer
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
 	const auto modelView = parent_.GetTransformXM() * gfx.GetCamera();
@@ -25,8 +26,8 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 		),
 	};
 
-	pVcbuf_->Update(gfx, tf);
-	pVcbuf_->Bind(gfx);
+	pVertexCbuf_->Update(gfx, tf);
+	pVertexCbuf_->Bind(gfx);
 }
 
-std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf_;
+std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVertexCbuf_;

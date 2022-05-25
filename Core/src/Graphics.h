@@ -16,7 +16,7 @@ class Bindable;
  */
 class Graphics
 {
-	// Bindable now have access to private member of Graphics class (like device pointer)
+	// Bindable now have access to private member of Graphics class
 	friend class Bindable;
 public:
 	Graphics(HWND hWnd, int width, int height);

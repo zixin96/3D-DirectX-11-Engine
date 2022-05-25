@@ -19,10 +19,10 @@
 #endif
 
 // macro for importing infomanager into local scope
-// this.GetInfoManager(Graphics& gfx) must exist
 #ifndef DX_DEBUG
 #define INFOMAN(gfx) HRESULT hr
 #else
+// INFOMAN is used outside graphics class, when we want a local copy of DxgiInfoManager
 #define INFOMAN(gfx) HRESULT hr; DxgiInfoManager& infoManager_ = GetInfoManager((gfx))
 #endif
 

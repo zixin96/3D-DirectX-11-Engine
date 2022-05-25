@@ -5,7 +5,8 @@
 class Box : public TestObject<Box>
 {
 public:
-	Box(Graphics& gfx, std::mt19937& rng,
+	Box(Graphics& gfx,
+	    std::mt19937& rng,
 	    std::uniform_real_distribution<float>& adist,
 	    std::uniform_real_distribution<float>& ddist,
 	    std::uniform_real_distribution<float>& odist,

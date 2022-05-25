@@ -6,7 +6,8 @@
 class VertexBuffer : public Bindable
 {
 public:
-	// TODO: Why make this a template? 
+	// since vertex types are defined by us, so we need to
+	// template the constructor to make it truly flexible
 	template <class V>
 	VertexBuffer(Graphics& gfx, const std::vector<V>& vertices)
 		:

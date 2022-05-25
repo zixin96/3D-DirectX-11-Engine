@@ -2,10 +2,13 @@
 #include "Bindable.h"
 #include "Debug/GraphicsThrowMacros.h"
 
+// since constant buffer type is defined by us,
+// we template the entire class to make it flexible
 template <typename C>
 class ConstantBuffer : public Bindable
 {
 public:
+	// update constant buffer every frame
 	void Update(Graphics& gfx, const C& consts)
 	{
 		INFOMAN(gfx);
@@ -85,6 +88,8 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer_;
 	UINT slot_;
 };
+
+// There are two types of constant buffers: vertex constant buffer, and pixel constant buffer
 
 template <typename C>
 class VertexConstantBuffer : public ConstantBuffer<C>

@@ -1,7 +1,7 @@
 #pragma once
 #include "Drawable/DrawableCommon.h"
 
-class Melon : public DrawableBase<Melon>
+class Melon : public DrawableCommon<Melon>
 {
 public:
 	Melon(Graphics& gfx, std::mt19937& rng,
