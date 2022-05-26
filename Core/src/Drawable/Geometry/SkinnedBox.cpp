@@ -7,8 +7,8 @@
 #include "Bindable/Texture.h"
 
 
-SkinnedBox::SkinnedBox(Graphics& gfx,
-                       std::mt19937& rng,
+SkinnedBox::SkinnedBox(Graphics&                              gfx,
+                       std::mt19937&                          rng,
                        std::uniform_real_distribution<float>& adist,
                        std::uniform_real_distribution<float>& ddist,
                        std::uniform_real_distribution<float>& odist,
@@ -35,7 +35,7 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 
 		AddStaticBind(std::make_unique<Sampler>(gfx));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaders/cso/TexturedPhongVS.cso");
+		auto pvs   = std::make_unique<VertexShader>(gfx, L"Shaders/cso/TexturedPhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
@@ -56,9 +56,9 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 		struct PSMaterialConstant
 		{
 			float specularIntensity = 0.6f;
-			float specularPower = 30.0f;
+			float specularPower     = 30.0f;
 			float padding[2];
-		} colorConst;
+		}         colorConst;
 		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 	}
 	else
@@ -69,13 +69,13 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-SkinnedBox::SkinnedBox(Graphics& gfx,
-                       std::mt19937& rng,
+SkinnedBox::SkinnedBox(Graphics&                              gfx,
+                       std::mt19937&                          rng,
                        std::uniform_real_distribution<float>& adist,
                        std::uniform_real_distribution<float>& ddist,
                        std::uniform_real_distribution<float>& odist,
                        std::uniform_real_distribution<float>& rdist,
-                       bool dummy)
+                       bool                                   dummy)
 	:
 	TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
@@ -95,7 +95,7 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 
 		AddStaticBind(std::make_unique<Sampler>(gfx));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaders/cso/TextureVS.cso");
+		auto pvs   = std::make_unique<VertexShader>(gfx, L"Shaders/cso/TextureVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
@@ -115,9 +115,9 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 		struct PSMaterialConstant
 		{
 			float specularIntensity = 0.6f;
-			float specularPower = 30.0f;
+			float specularPower     = 30.0f;
 			float padding[2];
-		} colorConst;
+		}         colorConst;
 		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 	}
 	else

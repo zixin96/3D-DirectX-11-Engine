@@ -7,12 +7,14 @@
 
 #include "Vertex.h"
 
-AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
+AssTest::AssTest(Graphics&                              gfx,
+                 std::mt19937&                          rng,
                  std::uniform_real_distribution<float>& adist,
                  std::uniform_real_distribution<float>& ddist,
                  std::uniform_real_distribution<float>& odist,
                  std::uniform_real_distribution<float>& rdist,
-                 DirectX::XMFLOAT3 material,
+                 DirectX::XMFLOAT3                      material,
+                 // we can scale the model:
                  float scale)
 	:
 	TestObject(gfx, rng, adist, ddist, odist, rdist)
@@ -24,27 +26,33 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 		// Ultimate goal is to have one source of truth for the vertex layout, which is the shader file
 		using D3DEngine::VertexLayout;
 		D3DEngine::VertexBuffer vbuf(std::move(
-			VertexLayout{}
-			.Append(VertexLayout::Position3D)
-			.Append(VertexLayout::Normal)
-		));
+		                                       VertexLayout{}
+		                                       .Append(VertexLayout::Position3D)
+		                                       .Append(VertexLayout::Normal)
+		                                      ));
 
 		// Assimp workflow: 
 		Assimp::Importer imp;
-		const auto pModel = imp.ReadFile("Models/suzanne.obj",
-		                                 aiProcess_Triangulate |
-		                                 aiProcess_JoinIdenticalVertices
-		);
+		const auto       pModel = imp.ReadFile("Models/suzanne.obj",
+		                                       aiProcess_Triangulate |
+		                                       // index drawing: 
+		                                       aiProcess_JoinIdenticalVertices
+		                                      );
+		// assume the first mesh is what we want
 		const auto pMesh = pModel->mMeshes[0];
 
 		for (unsigned int i = 0; i < pMesh->mNumVertices; i++)
 		{
 			vbuf.EmplaceBack(
-				dx::XMFLOAT3{
-					pMesh->mVertices[i].x * scale, pMesh->mVertices[i].y * scale, pMesh->mVertices[i].z * scale
-				},
-				*reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
-			);
+			                 dx::XMFLOAT3
+			                 {
+				                 // control the size of the model through scale
+				                 pMesh->mVertices[i].x * scale,
+				                 pMesh->mVertices[i].y * scale,
+				                 pMesh->mVertices[i].z * scale
+			                 },
+			                 *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
+			                );
 		}
 
 		std::vector<unsigned short> indices;
@@ -52,6 +60,7 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 		for (unsigned int i = 0; i < pMesh->mNumFaces; i++)
 		{
 			const auto& face = pMesh->mFaces[i];
+			// assume we have triangulated the mesh
 			assert(face.mNumIndices == 3);
 			indices.push_back(face.mIndices[0]);
 			indices.push_back(face.mIndices[1]);
@@ -62,7 +71,7 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaders/cso/PhongVS.cso");
+		auto pvs   = std::make_unique<VertexShader>(gfx, L"Shaders/cso/PhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
@@ -75,10 +84,10 @@ AssTest::AssTest(Graphics& gfx, std::mt19937& rng,
 		struct PSMaterialConstant
 		{
 			DirectX::XMFLOAT3 color;
-			float specularIntensity = 0.6f;
-			float specularPower = 30.0f;
-			float padding[3];
-		} pmc;
+			float             specularIntensity = 0.6f;
+			float             specularPower     = 30.0f;
+			float             padding[3];
+		}                     pmc;
 		pmc.color = material;
 		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 	}

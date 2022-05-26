@@ -17,6 +17,6 @@ VSOut main(float3 pos : Position, float3 n : Normal)
 	vso.posCamSpace = (float3)mul(float4(pos, 1.0f), modelView);
 	// model matrix to 3x3 since we don't want to translate the normal
 	vso.normalCamSpace = mul(n, (float3x3)modelView);
-	vso.pos = mul(float4(pos, 1.0f), modelViewProj);
+	vso.pos            = mul(float4(pos, 1.0f), modelViewProj);
 	return vso;
 }
