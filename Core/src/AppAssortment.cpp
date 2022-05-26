@@ -5,6 +5,8 @@
 #include "Drawable/Geometry/Melon.h"
 #include "Drawable/Geometry/Pyramid.h"
 #include "Drawable/Geometry/Box.h"
+#include "Drawable/Geometry/Sheet.h"
+#include "Drawable/Geometry/SkinnedBox.h"
 #include "Utils/EngineMath.h"
 
 namespace dx = DirectX;
@@ -53,6 +55,23 @@ AppAssortment::AppAssortment()
 				                               longdist,
 				                               latdist
 				);
+			case 3:
+				return std::make_unique<Sheet>(gfx,
+				                               rng,
+				                               adist,
+				                               ddist,
+				                               odist,
+				                               rdist
+				);
+			case 4:
+				return std::make_unique<SkinnedBox>(gfx,
+				                                    rng,
+				                                    adist,
+				                                    ddist,
+				                                    odist,
+				                                    rdist,
+				                                    true
+				);
 			default:
 				assert(false && "bad drawable type in factory");
 				return {};
@@ -71,7 +90,7 @@ AppAssortment::AppAssortment()
 		std::uniform_int_distribution<int> tdist{3, 30};
 		std::uniform_int_distribution<int> latdist{5, 20};
 		std::uniform_int_distribution<int> longdist{10, 40};
-		std::uniform_int_distribution<int> typedist{0, 2};
+		std::uniform_int_distribution<int> typedist{0, 4};
 	};
 
 	Factory f(wnd.Gfx());

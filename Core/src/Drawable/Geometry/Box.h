@@ -32,6 +32,7 @@ private:
 
 	struct PSMaterialConstant
 	{
+		// be mindful of paddings!
 		DirectX::XMFLOAT3 color;
 		float specularIntensity = 0.6f;
 		float specularPower = 30.0f;

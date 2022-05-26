@@ -6,7 +6,7 @@ Sampler::Sampler(Graphics& gfx)
 	INFOMAN(gfx);
 
 	D3D11_SAMPLER_DESC samplerDesc = {
-		.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT,
+		.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
 		.AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
 		.AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
 		.AddressW = D3D11_TEXTURE_ADDRESS_WRAP,

@@ -1,3 +1,5 @@
+// texture bound to slot 0
+// Texture2D tex : register(t0);
 Texture2D tex;
 
 SamplerState splr;

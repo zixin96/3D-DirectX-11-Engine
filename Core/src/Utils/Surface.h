@@ -3,9 +3,15 @@
 #include "Debug/DXException.h"
 #include "Debug/ConditionalNoexcept.h"
 
+/**
+ * \brief Surface class is used for loading images via GDI+
+ */
 class Surface
 {
 public:
+	/**
+	 * \brief Surface is based on Color
+	 */
 	class Color
 	{
 	public:
@@ -135,6 +141,7 @@ public:
 private:
 	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;
 private:
+	// store image data as an array of Color
 	std::unique_ptr<Color[]> pBuffer_;
 	unsigned int width_;
 	unsigned int height_;

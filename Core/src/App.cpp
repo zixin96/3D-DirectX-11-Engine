@@ -4,7 +4,7 @@
 
 namespace dx = DirectX;
 
-GDIPlusManager gdipm;
+static GDIPlusManager gdipm;
 
 App::App()
 {

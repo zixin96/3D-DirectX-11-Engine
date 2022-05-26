@@ -58,6 +58,7 @@ Box::Box(Graphics& gfx,
 	// Remember that material constant buffer varies per object, so it is a normal binding
 
 	materialConstants_.color = material;
+	// box's material parameters reside in constant buffer slot 1
 	AddBind(std::make_unique<MaterialCbuf>(gfx, materialConstants_, 1u));
 
 	// model deformation transform (per instance, not stored as bind)

@@ -13,17 +13,7 @@ Sheet::Sheet(Graphics& gfx,
              std::uniform_real_distribution<float>& ddist,
              std::uniform_real_distribution<float>& odist,
              std::uniform_real_distribution<float>& rdist)
-	:
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dphi(odist(rng)),
-	dtheta(odist(rng)),
-	dchi(odist(rng)),
-	chi(adist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng))
+	: TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
 	namespace dx = DirectX;
 
@@ -73,22 +63,4 @@ Sheet::Sheet(Graphics& gfx,
 	}
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
-}
-
-void Sheet::Update(float dt) noexcept
-{
-	roll += droll * dt;
-	pitch += dpitch * dt;
-	yaw += dyaw * dt;
-	theta += dtheta * dt;
-	phi += dphi * dt;
-	chi += dchi * dt;
-}
-
-DirectX::XMMATRIX Sheet::GetTransformXM() const noexcept
-{
-	namespace dx = DirectX;
-	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }

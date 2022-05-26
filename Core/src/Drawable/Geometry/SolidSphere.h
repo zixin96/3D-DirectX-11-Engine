@@ -2,7 +2,7 @@
 #include "Drawable/DrawableCommon.h"
 
 /**
- * \brief SolidSphere that currently represents our ligth source
+ * \brief SolidSphere that currently represents our light source
  */
 class SolidSphere : public DrawableCommon<SolidSphere>
 {

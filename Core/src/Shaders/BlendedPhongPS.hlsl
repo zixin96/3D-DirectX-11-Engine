@@ -1,21 +1,20 @@
 cbuffer LightCBuf
 {
-float3 lightPos;
-float3 ambient;
-float3 diffuseColor;
-float diffuseIntensity;
-float attConst;
-float attLin;
-float attQuad;
+	float3 lightPos;
+	float3 ambient;
+	float3 diffuseColor;
+	float diffuseIntensity;
+	float attConst;
+	float attLin;
+	float attQuad;
 };
 
 cbuffer ObjectCBuf
 {
-float specularIntensity;
-float specularPower;
-float padding[2];
+	float specularIntensity;
+	float specularPower;
+	float padding[2];
 };
-
 
 float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, float3 color : Color) : SV_Target
 {

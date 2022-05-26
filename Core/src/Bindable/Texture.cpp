@@ -54,5 +54,6 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 
 void Texture::Bind(Graphics& gfx) noexcept
 {
+	// textures are used by pixel shaders
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView_.GetAddressOf());
 }
