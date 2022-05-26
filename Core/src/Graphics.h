@@ -46,8 +46,8 @@ public:
 private:
 	bool imguiEnabled_ = true;
 
-	DirectX::XMMATRIX projection_;
-	DirectX::XMMATRIX camera_;
+	DirectX::XMMATRIX projMat_;
+	DirectX::XMMATRIX cameraMat_;
 
 #ifdef DX_DEBUG
 	DxgiInfoManager infoManager_;

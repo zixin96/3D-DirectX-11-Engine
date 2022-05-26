@@ -201,22 +201,22 @@ void Graphics::DrawIndexed(UINT count) noxnd
 
 void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
 {
-	projection_ = proj;
+	projMat_ = proj;
 }
 
 DirectX::XMMATRIX Graphics::GetProjection() const noexcept
 {
-	return projection_;
+	return projMat_;
 }
 
 void Graphics::SetCamera(DirectX::FXMMATRIX cam) noexcept
 {
-	camera_ = cam;
+	cameraMat_ = cam;
 }
 
 DirectX::XMMATRIX Graphics::GetCamera() const noexcept
 {
-	return camera_;
+	return cameraMat_;
 }
 
 void Graphics::BeginFrame(float red, float green, float blue) noexcept

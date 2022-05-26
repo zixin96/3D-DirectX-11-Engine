@@ -16,6 +16,7 @@ public:
 	virtual void Update(float dt) noexcept {};
 	void Draw(Graphics& gfx) const noxnd;
 protected:
+	// query instance of bindable to be changed
 	template <class T>
 	T* QueryBindable() noexcept
 	{

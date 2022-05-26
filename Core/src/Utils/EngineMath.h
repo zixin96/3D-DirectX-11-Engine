@@ -9,6 +9,7 @@ constexpr auto sq(const T& x)
 	return x * x;
 }
 
+// wrap angle from -pi to pi
 template <typename T>
 T wrap_angle(T theta)
 {

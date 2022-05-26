@@ -118,16 +118,10 @@ void AppAssortmentPhong::DoFrame()
 
 	// imgui window to control simulation speed
 	SpawnSimulationWindow();
-
-	// imgui window to control camera
 	cam_.SpawnControlWindow();
-
-	// imgui window to contrl light
 	light_.SpawnControlWindow();
-
 	// imgui window to open box windows
 	SpawnBoxWindowManagerWindow();
-
 	// imgui box attribute control windows
 	SpawnBoxWindows();
 
@@ -190,6 +184,7 @@ void AppAssortmentPhong::SpawnBoxWindows() noxnd
 		}
 		else
 		{
+			// keep track of iteration here since we erase while iterating 
 			i++;
 		}
 	}

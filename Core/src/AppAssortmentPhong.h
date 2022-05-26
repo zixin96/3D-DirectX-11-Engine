@@ -32,6 +32,8 @@ private:
 	PointLight light_{wnd_.Gfx()};
 	std::vector<std::unique_ptr<Drawable>> drawables_{};
 	static constexpr size_t nDrawables_ = 180;
+	// The following parameters are used to control individual boxes: 
+	// keep track of drawables that are boxes
 	std::vector<class Box*> boxes_{};
 	std::optional<int> comboBoxIndex_;
 	std::set<int> boxControlIds_;

@@ -4,7 +4,7 @@
 PointLight::PointLight(Graphics& gfx, float radius)
 	:
 	mesh_(gfx, radius),
-	cbuf_(gfx)
+	cbuf_(gfx, 0)
 {
 	// initialize lighting parameters when we create the point light
 	Reset();
