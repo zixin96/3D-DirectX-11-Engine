@@ -153,15 +153,10 @@ void AppAssortmentPhong::SpawnBoxWindowManagerWindow() noxnd
 		{
 			for (int i = 0; i < boxes_.size(); i++)
 			{
-				// const bool selected = *comboBoxIndex_ == i;
 				if (ImGui::Selectable(std::to_string(i).c_str()))
 				{
 					comboBoxIndex_ = i;
 				}
-				/*if (selected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}*/
 			}
 			ImGui::EndCombo();
 		}
