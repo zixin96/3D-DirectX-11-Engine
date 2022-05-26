@@ -106,16 +106,15 @@ void AppAssortmentPhong::DoFrame()
 	const auto dt = timer_.Mark() * speedFactor_;;
 	wnd_.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 	wnd_.Gfx().SetCamera(cam_.GetMatrix());
+
 	light_.Bind(wnd_.Gfx(), cam_.GetMatrix());
-	
+	light_.Draw(wnd_.Gfx());
+
 	for (auto& d : drawables_)
 	{
 		d->Update(wnd_.kbd_.KeyIsPressed(VK_SPACE) ? 0.0f : dt);
 		d->Draw(wnd_.Gfx());
 	}
-
-	// put light_.draw after d->draw. Otherwise, alignment errors
-	light_.Draw(wnd_.Gfx());
 
 	// imgui window to control simulation speed
 	SpawnSimulationWindow();

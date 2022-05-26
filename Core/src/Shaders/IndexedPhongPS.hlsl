@@ -1,5 +1,5 @@
 // This buffer is set per frame for the light (default to slot 0)
-cbuffer LightCBuf
+cbuffer LightCBuf : register(b0)
 {
 // we can update lighting parameters every frame
 
@@ -14,7 +14,7 @@ float attQuad;
 };
 
 // This buffer is set per object for each object we want to render (default to slot 1)
-cbuffer ObjectCBuf
+cbuffer ObjectCBuf : register(b1)
 {
 float3 materialColors[6];
 // the reason why we need a padding here is because GPU will not pad the the last element in the array,

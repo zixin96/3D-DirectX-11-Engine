@@ -4,8 +4,7 @@
 PointLight::PointLight(Graphics& gfx, float radius)
 	:
 	mesh_(gfx, radius),
-	// lighting parameters reside in constant buffer slot 0
-	cbuf_(gfx, 0)
+	cbuf_(gfx)
 {
 	// initialize lighting parameters when we create the point light
 	Reset();
@@ -60,6 +59,12 @@ void PointLight::Draw(Graphics& gfx) const noxnd
 	mesh_.Draw(gfx);
 }
 
+/**
+ * \brief Update and bind point light constant buffer with latest position data
+ * and data from configurable IMGUI
+ * \param gfx Graphics object
+ * \param view View matrix, since we do lighting computation in camera space
+ */
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept
 {
 	// compute light position in camera space
