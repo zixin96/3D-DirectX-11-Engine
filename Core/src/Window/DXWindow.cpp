@@ -17,10 +17,10 @@ const char* DXWindow::HrException::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
-		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
-		<< "[Description] " << GetErrorDescription() << std::endl
-		<< GetOriginString();
+			<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+			<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+			<< "[Description] " << GetErrorDescription() << std::endl
+			<< GetOriginString();
 	whatBuffer_ = oss.str();
 	return whatBuffer_.c_str();
 }
@@ -53,14 +53,15 @@ std::string DXWindow::Exception::TranslateErrorCode(HRESULT hr) noexcept
 	char* pMsgBuf = nullptr;
 	// windows will allocate memory for err string and make our pointer point to it
 	DWORD nMsgLen = FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr,
-		hr,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		reinterpret_cast<LPSTR>(&pMsgBuf),
-		0,
-		nullptr
-	);
+	                              FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+	                              FORMAT_MESSAGE_IGNORE_INSERTS,
+	                              nullptr,
+	                              hr,
+	                              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+	                              reinterpret_cast<LPSTR>(&pMsgBuf),
+	                              0,
+	                              nullptr
+	                             );
 	// 0 string length returned indicates a failure
 	if (nMsgLen == 0)
 	{
@@ -99,27 +100,27 @@ DXWindow::WindowClass::WindowClass() noexcept
 	hInst_(GetModuleHandle(nullptr))
 {
 	WNDCLASSEX wc = {0};
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_OWNDC;
+	wc.cbSize     = sizeof(wc);
+	wc.style      = CS_OWNDC;
 
 	// register our custom window procedure
 	wc.lpfnWndProc = HandleMsgSetup;
 
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = hInst_;
-	wc.hIcon = static_cast<HICON>(LoadImage(
-		hInst_, MAKEINTRESOURCE(IDI_ICON1),
-		IMAGE_ICON, 32, 32, 0
-	));
-	wc.hCursor = nullptr;
+	wc.hInstance  = hInst_;
+	wc.hIcon      = static_cast<HICON>(LoadImage(
+	                                             hInst_, MAKEINTRESOURCE(IDI_ICON1),
+	                                             IMAGE_ICON, 32, 32, 0
+	                                            ));
+	wc.hCursor       = nullptr;
 	wc.hbrBackground = nullptr;
-	wc.lpszMenuName = nullptr;
+	wc.lpszMenuName  = nullptr;
 	wc.lpszClassName = wndClassName_;
-	wc.hIconSm = static_cast<HICON>(LoadImage(
-		hInst_, MAKEINTRESOURCE(IDI_ICON1),
-		IMAGE_ICON, 16, 16, 0
-	));
+	wc.hIconSm       = static_cast<HICON>(LoadImage(
+	                                                hInst_, MAKEINTRESOURCE(IDI_ICON1),
+	                                                IMAGE_ICON, 16, 16, 0
+	                                               ));
 	RegisterClassEx(&wc);
 }
 
@@ -149,9 +150,9 @@ DXWindow::DXWindow(int width, int height, const char* name)
 {
 	// specify desired client region size
 	RECT wr;
-	wr.left = 100;
-	wr.right = width_ + wr.left;
-	wr.top = 100;
+	wr.left   = 100;
+	wr.right  = width_ + wr.left;
+	wr.top    = 100;
 	wr.bottom = height_ + wr.top;
 
 	// calculate the entire window size based on desired client region size
@@ -162,26 +163,26 @@ DXWindow::DXWindow(int width, int height, const char* name)
 
 	// create window & get hWnd
 	hWnd_ = CreateWindow(
-		WindowClass::GetName(),
-		name,
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+	                     WindowClass::GetName(),
+	                     name,
+	                     WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 
-		// let Windows decide the starting position of the window
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+	                     // let Windows decide the starting position of the window
+	                     CW_USEDEFAULT,
+	                     CW_USEDEFAULT,
 
-		// width_/height_ of the window
-		wr.right - wr.left,
-		wr.bottom - wr.top,
+	                     // width_/height_ of the window
+	                     wr.right - wr.left,
+	                     wr.bottom - wr.top,
 
-		nullptr,
-		nullptr,
-		WindowClass::GetInstance(),
+	                     nullptr,
+	                     nullptr,
+	                     WindowClass::GetInstance(),
 
-		// pointer to window-creation data
-		// we pass "this" in CreateWindow so that we can extract "this" inside WinAPI callback functions
-		this
-	);
+	                     // pointer to window-creation data
+	                     // we pass "this" in CreateWindow so that we can extract "this" inside WinAPI callback functions
+	                     this
+	                    );
 
 	// check for error
 	if (hWnd_ == nullptr)
@@ -288,171 +289,267 @@ LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 
 	switch (msg)
 	{
-	case WM_CLOSE:
-		PostQuitMessage(0);
-	// we don't want the DefProc to handle this message because
-	// we want our destructor to destroy the window, rather than the DefProc,
-	// so return 0 instead of break
-		return 0;
+		case WM_CLOSE:
+			PostQuitMessage(0);
+		// we don't want the DefProc to handle this message because
+		// we want our destructor to destroy the window, rather than the DefProc,
+		// so return 0 instead of break
+			return 0;
 
-	// clear keystate when window loses focus to prevent input getting "stuck"
-	case WM_KILLFOCUS:
-		kbd_.ClearState();
-		break;
-
-	/*********** KEYBOARD MESSAGES ***********/
-	case WM_KEYDOWN:
-	// syskey commands need to be handled to track ALT key (VK_MENU) and F10
-	case WM_SYSKEYDOWN:
-		// stifle this keyboard message if imgui wants to capture
-		if (imio.WantCaptureKeyboard)
-		{
+		// clear keystate when window loses focus to prevent input getting "stuck"
+		case WM_KILLFOCUS:
+			kbd_.ClearState();
 			break;
-		}
 
-	// filter auto repeat key event 
-		if (!(lParam & 0x40000000) || kbd_.AutorepeatIsEnabled())
-		{
-			kbd_.OnKeyPressed(static_cast<unsigned char>(wParam));
-		}
-		break;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		// stifle this keyboard message if imgui wants to capture
-		if (imio.WantCaptureKeyboard)
-		{
+		case WM_ACTIVATE:
+			// confine/free cursor on window to foreground/background if cursor disabled
+			if (!cursorEnabled_)
+			{
+				if (wParam & WA_ACTIVE)
+				{
+					ConfineCursor();
+					HideCursor();
+				}
+				else
+				{
+					FreeCursor();
+					ShowCursor();
+				}
+			}
 			break;
-		}
 
-		kbd_.OnKeyReleased(static_cast<unsigned char>(wParam));
-		break;
-	case WM_CHAR:
-		// stifle this keyboard message if imgui wants to capture
-		if (imio.WantCaptureKeyboard)
-		{
-			break;
-		}
-
-		kbd_.OnChar(static_cast<unsigned char>(wParam));
-		break;
-	/*********** END KEYBOARD MESSAGES ***********/
-
-	/************* MOUSE MESSAGES ****************/
-
-	case WM_MOUSEMOVE:
-		{
+		/*********** KEYBOARD MESSAGES ***********/
+		case WM_KEYDOWN:
+		// syskey commands need to be handled to track ALT key (VK_MENU) and F10
+		case WM_SYSKEYDOWN:
 			// stifle this keyboard message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (imio.WantCaptureKeyboard)
 			{
 				break;
 			}
-			// we support tracking mouse movement even if mouse is outside
-			// the client region (provided the left/right button is pressed)
 
-			const POINTS pt = MAKEPOINTS(lParam);
-			// mouse move happens inside the client region
-			if (pt.x >= 0 && pt.x < width_ && pt.y >= 0 && pt.y < height_)
+		// filter auto repeat key event 
+			if (!(lParam & 0x40000000) || kbd_.AutorepeatIsEnabled())
 			{
-				// log the mouse move
-				mouse_.OnMouseMove(pt.x, pt.y);
-				// if the mouse is not previously in the window: 
-				if (!mouse_.IsInWindow())
-				{
-					// capture the mouse: as long as mouse is captured, even if the mouse leaves the window region, we still going to receive mouse move events
-					SetCapture(hWnd);
-					// log enter event
-					mouse_.OnMouseEnter();
-				}
+				kbd_.OnKeyPressed(static_cast<unsigned char>(wParam));
 			}
-			// mouse move happens outside the client region: 
-			else
+			break;
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+			// stifle this keyboard message if imgui wants to capture
+			if (imio.WantCaptureKeyboard)
 			{
-				// if the mouse left or right button is pressed: 
-				if (wParam & (MK_LBUTTON | MK_RBUTTON))
+				break;
+			}
+
+			kbd_.OnKeyReleased(static_cast<unsigned char>(wParam));
+			break;
+		case WM_CHAR:
+			// stifle this keyboard message if imgui wants to capture
+			if (imio.WantCaptureKeyboard)
+			{
+				break;
+			}
+
+			kbd_.OnChar(static_cast<unsigned char>(wParam));
+			break;
+		/*********** END KEYBOARD MESSAGES ***********/
+
+		/************* MOUSE MESSAGES ****************/
+
+		case WM_MOUSEMOVE:
+			{
+				const POINTS pt = MAKEPOINTS(lParam);
+
+				// cursorless exclusive gets first dibs
+				if (!cursorEnabled_)
 				{
-					// generate the mouse move, even if we are outside the client region
-					mouse_.OnMouseMove(pt.x, pt.y);
+					if (!mouse_.IsInWindow())
+					{
+						SetCapture(hWnd);
+						mouse_.OnMouseEnter();
+						HideCursor();
+					}
+					break;
 				}
-				// button up -> release capture / log event for leaving
+
+				// stifle this keyboard message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+
+				// we support tracking mouse movement even if mouse is outside
+				// the client region (provided the left/right button is pressed)
+
+				// mouse move happens inside the client region
+				if (pt.x >= 0 && pt.x < width_ && pt.y >= 0 && pt.y < height_)
+				{
+					// log the mouse move
+					mouse_.OnMouseMove(pt.x, pt.y);
+					// if the mouse is not previously in the window: 
+					if (!mouse_.IsInWindow())
+					{
+						// capture the mouse: as long as mouse is captured, even if the mouse leaves the window region, we still going to receive mouse move events
+						SetCapture(hWnd);
+						// log enter event
+						mouse_.OnMouseEnter();
+					}
+				}
+				// mouse move happens outside the client region: 
 				else
+				{
+					// if the mouse left or right button is pressed: 
+					if (wParam & (MK_LBUTTON | MK_RBUTTON))
+					{
+						// generate the mouse move, even if we are outside the client region
+						mouse_.OnMouseMove(pt.x, pt.y);
+					}
+					// button up -> release capture / log event for leaving
+					else
+					{
+						ReleaseCapture();
+						mouse_.OnMouseLeave();
+					}
+				}
+				break;
+			}
+		case WM_LBUTTONDOWN:
+			{
+				SetForegroundWindow(hWnd);
+				if (!cursorEnabled_)
+				{
+					ConfineCursor();
+					HideCursor();
+				}
+				// stifle this mouse message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				const POINTS pt = MAKEPOINTS(lParam);
+				mouse_.OnLeftPressed(pt.x, pt.y);
+				break;
+			}
+		case WM_RBUTTONDOWN:
+			{
+				// stifle this mouse message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				const POINTS pt = MAKEPOINTS(lParam);
+				mouse_.OnRightPressed(pt.x, pt.y);
+				break;
+			}
+		case WM_LBUTTONUP:
+			{
+				// stifle this mouse message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				const POINTS pt = MAKEPOINTS(lParam);
+				mouse_.OnLeftReleased(pt.x, pt.y);
+				// release mouse_ if outside of window
+				if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_)
 				{
 					ReleaseCapture();
 					mouse_.OnMouseLeave();
 				}
-			}
-			break;
-		}
-	case WM_LBUTTONDOWN:
-		{
-			SetForegroundWindow(hWnd);
-			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
-			{
 				break;
 			}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse_.OnLeftPressed(pt.x, pt.y);
-			break;
-		}
-	case WM_RBUTTONDOWN:
-		{
-			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+		case WM_RBUTTONUP:
 			{
+				// stifle this mouse message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				const POINTS pt = MAKEPOINTS(lParam);
+				mouse_.OnRightReleased(pt.x, pt.y);
+				// release mouse_ if outside of window
+				if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_)
+				{
+					ReleaseCapture();
+					mouse_.OnMouseLeave();
+				}
 				break;
 			}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse_.OnRightPressed(pt.x, pt.y);
-			break;
-		}
-	case WM_LBUTTONUP:
-		{
-			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+		case WM_MOUSEWHEEL:
 			{
+				// stifle this mouse message if imgui wants to capture
+				if (imio.WantCaptureMouse)
+				{
+					break;
+				}
+				const POINTS pt    = MAKEPOINTS(lParam);
+				const int    delta = GET_WHEEL_DELTA_WPARAM(wParam);
+				mouse_.OnWheelDelta(pt.x, pt.y, delta);
 				break;
 			}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse_.OnLeftReleased(pt.x, pt.y);
-			// release mouse_ if outside of window
-			if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_)
-			{
-				ReleaseCapture();
-				mouse_.OnMouseLeave();
-			}
-			break;
-		}
-	case WM_RBUTTONUP:
-		{
-			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
-			{
-				break;
-			}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse_.OnRightReleased(pt.x, pt.y);
-			// release mouse_ if outside of window
-			if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_)
-			{
-				ReleaseCapture();
-				mouse_.OnMouseLeave();
-			}
-			break;
-		}
-	case WM_MOUSEWHEEL:
-		{
-			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
-			{
-				break;
-			}
-			const POINTS pt = MAKEPOINTS(lParam);
-			const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-			mouse_.OnWheelDelta(pt.x, pt.y, delta);
-			break;
-		}
-	/************** END MOUSE MESSAGES **************/
+		/************** END MOUSE MESSAGES **************/
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void DXWindow::EnableCursor()
+{
+	cursorEnabled_ = true;
+	ShowCursor();
+	EnableImGuiMouse();
+	FreeCursor();
+}
+
+void DXWindow::DisableCursor()
+{
+	cursorEnabled_ = false;
+	HideCursor();
+	DisableImGuiMouse();
+	ConfineCursor();
+}
+
+// --------------Cursor Private Helpers---------------------
+
+// if the counter > 0, the cursor will be visible
+// o.w. it's hidden
+
+void DXWindow::HideCursor() noxnd
+{
+	// ShowCursor(FALSE) decrements the counter
+	// keep calling ShowCursor(FALSE) until the counter is below 0
+	while (::ShowCursor(FALSE) >= 0);
+}
+
+void DXWindow::ShowCursor() noxnd
+{
+	// ShowCursor(TRUE) increments the counter
+	// keep calling ShowCursor(TRUE) until the counter is larger than or equal to 0
+	while (::ShowCursor(TRUE) < 0);
+}
+
+void DXWindow::EnableImGuiMouse() noxnd
+{
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+
+void DXWindow::DisableImGuiMouse() noxnd
+{
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+}
+
+void DXWindow::ConfineCursor() noxnd
+{
+	RECT rect;
+	GetClientRect(hWnd_, &rect);
+	// map two points of the rectangle into screen space
+	MapWindowPoints(hWnd_, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+	// trap the cursor
+	ClipCursor(&rect);
+}
+
+void DXWindow::FreeCursor() noxnd
+{
+	ClipCursor(nullptr);
 }
