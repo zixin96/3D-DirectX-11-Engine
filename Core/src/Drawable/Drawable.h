@@ -32,6 +32,6 @@ namespace D3DEngine
 			void AddBind(std::shared_ptr<Bindable> bind) noxnd;
 		private:
 			const IndexBuffer*                     pIndexBuffer_ = nullptr;
-			std::vector<std::shared_ptr<Bindable>> binds_;
+			std::vector<std::shared_ptr<Bindable>> binds_; // Single pool of Bindables per Drawable instance
 	};
 }
