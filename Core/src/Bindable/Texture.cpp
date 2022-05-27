@@ -4,7 +4,9 @@
 
 namespace wrl = Microsoft::WRL;
 
-Texture::Texture(Graphics& gfx, const Surface& s)
+Texture::Texture(Graphics& gfx, const Surface& s, unsigned int slot)
+	:
+	slot(slot)
 {
 	INFOMAN(gfx);
 
@@ -29,31 +31,30 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 
 	// initialize with data
 	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	// distance in bytes between the first pixel in row 0 and the first pixel in row 1 
-	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color);
+	sd.pSysMem                = s.GetBufferPtr();
+	sd.SysMemPitch            = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between the first pixel in row 0 and the first pixel in row 1 
 
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
-		&textureDesc,
-		&sd,
-		&pTexture
-	));
+		               &textureDesc,
+		               &sd,
+		               &pTexture
+	               ));
 
 	// create the resource view on the texture
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Format                          = textureDesc.Format;
+	srvDesc.ViewDimension                   = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip       = 0;
+	srvDesc.Texture2D.MipLevels             = 1;
 
 	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
-		pTexture.Get(), &srvDesc, &pTextureView_
-	));
+		               pTexture.Get(), &srvDesc, &pTextureView_
+	               ));
 }
 
 void Texture::Bind(Graphics& gfx) noexcept
 {
 	// textures are used by pixel shaders
-	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView_.GetAddressOf());
+	GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView_.GetAddressOf());
 }

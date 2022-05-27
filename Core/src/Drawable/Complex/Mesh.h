@@ -2,7 +2,6 @@
 #include "Drawable/DrawableCommon.h"
 #include "Bindable/BindableCommon.h"
 #include "Vertex.h"
-#include <optional>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -59,7 +58,7 @@ class Model
 		// we must define this destructor in .cpp file o.w. we won't be able to declare unique_ptr to a forward declared ModelWindow
 		~Model() noxnd;
 	private:
-		static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
+		static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials);
 		std::unique_ptr<Node>        ParseNode(int& nextId, const aiNode& node) noexcept;
 	private:
 		std::unique_ptr<Node>              pRoot_;    // we only need to store the root pointer, which will lead us to the rest of the nodes

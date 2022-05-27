@@ -29,5 +29,5 @@ class App
 		float      speedFactor_{1.f};
 		Camera     cam_{};
 		PointLight light_{wnd_.Gfx()};
-		Model      nano{wnd_.Gfx(), "Models/nano.gltf"};
+		Model      nano{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
 };
