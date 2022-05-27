@@ -2,32 +2,26 @@
 #include "Debug/GraphicsThrowMacros.h"
 #include "Bindable/IndexBuffer.h"
 
-void Drawable::Draw(Graphics& gfx) const noxnd
+namespace D3DEngine
 {
-	// bind the bindables (bindables that are unique per instance)
-	for (auto& b : binds_)
+	void Drawable::Draw(Graphics& gfx) const noxnd
 	{
-		b->Bind(gfx);
+		// bind the bindables (bindables that are unique per instance)
+		for (auto& b : binds_)
+		{
+			b->Bind(gfx);
+		}
+		gfx.DrawIndexed(pIndexBuffer_->GetCount());
 	}
-	// bind static bindables (bindables that are shared among instances)
-	for (auto& b : GetStaticBinds())
+
+	void Drawable::AddBind(std::shared_ptr<Bindable> bind) noxnd
 	{
-		b->Bind(gfx);
+		// special case for index buffer
+		if (typeid(*bind) == typeid(IndexBuffer))
+		{
+			assert("Binding multiple index buffers not allowed" && pIndexBuffer_ == nullptr);
+			pIndexBuffer_ = &static_cast<IndexBuffer&>(*bind);
+		}
+		binds_.push_back(std::move(bind));
 	}
-	gfx.DrawIndexed(pIndexBuffer_->GetCount());
-}
-
-// use this when adding anything else
-void Drawable::AddBind(std::unique_ptr<Bindable> bind) noxnd
-{
-	assert("*Must* use AddIndexBuffer to bind index buffer" && typeid(*bind) != typeid(IndexBuffer));
-	binds_.push_back(std::move(bind));
-}
-
-// use this when adding index buffer
-void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noxnd
-{
-	assert("Attempting to add index buffer a second time" && pIndexBuffer_ == nullptr);
-	pIndexBuffer_ = ibuf.get();
-	binds_.push_back(std::move(ibuf));
 }

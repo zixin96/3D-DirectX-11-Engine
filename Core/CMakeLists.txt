@@ -26,10 +26,10 @@ if(MSVC)
     # set current working directoy so that relative path works
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 endif()
-  
+        
 SETUP_GROUPS("${SRC_FILES}")
 SETUP_GROUPS("${HEADER_FILES}")
-
+ 
 SET_OUTPUT_NAMES(${PROJECT_NAME})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)

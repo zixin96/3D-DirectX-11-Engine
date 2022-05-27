@@ -17,9 +17,10 @@ void App::DoFrame()
 	wnd_.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 	wnd_.Gfx().SetCamera(cam_.GetMatrix());
 	light_.Bind(wnd_.Gfx(), cam_.GetMatrix());
+	light_.Draw(wnd_.Gfx());
 
 	nano.Draw(wnd_.Gfx());
-	light_.Draw(wnd_.Gfx());
+	nano2.Draw(wnd_.Gfx());
 
 	while (const auto e = wnd_.kbd_.ReadKey())
 	{
@@ -41,9 +42,6 @@ void App::DoFrame()
 					wnd_.EnableCursor();
 					wnd_.mouse_.DisableRaw();
 				}
-				break;
-			case VK_ESCAPE:
-				showDemoWindow = true;
 				break;
 		}
 	}
@@ -87,8 +85,8 @@ void App::DoFrame()
 	// imgui windows
 	cam_.SpawnControlWindow();
 	light_.SpawnControlWindow();
-	nano.ShowWindow();
-	ShowImguiDemoWindow();
+	nano.ShowWindow("Model 1");
+	nano2.ShowWindow("Model 2");
 
 	// present
 	wnd_.Gfx().EndFrame();
@@ -99,7 +97,7 @@ int App::Go()
 	while (true)
 	{
 		// process all pending messages, but do not block if there are no messages to process
-		if (const auto ecode = DXWindow::ProcessMessages())
+		if (const auto ecode = D3DEngine::DXWindow::ProcessMessages())
 		{
 			// if return std::optional has value, means we're quitting so return exit code
 			return *ecode;
@@ -108,10 +106,3 @@ int App::Go()
 	}
 }
 
-void App::ShowImguiDemoWindow()
-{
-	if (showDemoWindow)
-	{
-		ImGui::ShowDemoWindow(&showDemoWindow);
-	}
-}

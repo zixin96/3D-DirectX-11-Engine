@@ -19,15 +19,14 @@ class App
 		~App() = default;
 	private:
 		void DoFrame();
-		void ShowImguiDemoWindow();
-		bool showDemoWindow = false;
 		// always first initialize IMGUI
 		ImguiManager imgui_{};
 		// Please specify a resolution with aspect ratio = 16:9
-		DXWindow   wnd_{1920, 1080, "The Donkey Fart Box"};
-		DXTimer    timer_{};
-		float      speedFactor_{1.f};
-		Camera     cam_{};
-		PointLight light_{wnd_.Gfx()};
-		Model      nano{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
+		D3DEngine::DXWindow   wnd_{1920, 1080, "The Donkey Fart Box"};
+		DXTimer               timer_{};
+		float                 speedFactor_{1.f};
+		Camera                cam_{};
+		D3DEngine::PointLight light_{wnd_.Gfx()};
+		D3DEngine::Model      nano{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
+		D3DEngine::Model      nano2{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
 };

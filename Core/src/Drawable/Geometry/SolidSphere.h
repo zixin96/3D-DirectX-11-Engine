@@ -1,16 +1,18 @@
 #pragma once
-#include "Drawable/DrawableCommon.h"
+#include "Drawable/Drawable.h"
 
-/**
- * \brief SolidSphere that currently represents our light source
- */
-class SolidSphere : public DrawableCommon<SolidSphere>
+namespace D3DEngine
 {
-public:
-	SolidSphere(Graphics& gfx, float radius);
-	void Update(float dt) noexcept override;
-	void SetPos(DirectX::XMFLOAT3 pos) noexcept;
-	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-private:
-	DirectX::XMFLOAT3 pos_ = {1.0f, 1.0f, 1.0f};
-};
+	/**
+	 * \brief SolidSphere that currently represents our light source
+	 */
+	class SolidSphere : public Drawable
+	{
+		public:
+			SolidSphere(Graphics& gfx, float radius);
+			void              SetPos(DirectX::XMFLOAT3 pos) noexcept;
+			DirectX::XMMATRIX GetTransformXM() const noexcept override;
+		private:
+			DirectX::XMFLOAT3 pos = {1.0f, 1.0f, 1.0f};
+	};
+}

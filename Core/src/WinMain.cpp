@@ -1,7 +1,4 @@
 #include "App.h"
-#include "AppAssortment.h"
-#include "AppAssortmentPhong.h"
-
 #include "Window/DXWindow.h"
 
 // In this demo, 
