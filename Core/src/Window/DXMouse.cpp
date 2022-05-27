@@ -1,6 +1,48 @@
 #include "Utils/WinHelper.h"
 #include "DXMouse.h"
 
+std::optional<DXMouse::RawDelta> DXMouse::ReadRawDelta() noexcept
+{
+	if (rawDeltaBuffer.empty())
+	{
+		// nullopt: no data in delta buffer
+		return std::nullopt;
+	}
+	const RawDelta d = rawDeltaBuffer.front();
+	rawDeltaBuffer.pop();
+	return d;
+}
+
+void DXMouse::OnRawDelta(int dx, int dy) noexcept
+{
+	rawDeltaBuffer.push({dx, dy});
+	TrimBuffer();
+}
+
+
+void DXMouse::TrimRawInputBuffer() noexcept
+{
+	while (rawDeltaBuffer.size() > bufferSize_)
+	{
+		rawDeltaBuffer.pop();
+	}
+}
+
+void DXMouse::EnableRaw() noexcept
+{
+	rawEnabled = true;
+}
+
+void DXMouse::DisableRaw() noexcept
+{
+	rawEnabled = false;
+}
+
+bool DXMouse::RawEnabled() const noexcept
+{
+	return rawEnabled;
+}
+
 std::pair<int, int> DXMouse::GetPos() const noexcept
 {
 	return {x_, y_};

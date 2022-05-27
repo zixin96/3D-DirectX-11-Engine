@@ -79,6 +79,8 @@ class DXWindow
 		void EnableCursor() noxnd;
 		void DisableCursor() noxnd;
 
+		bool CursorEnabled() const noexcept;
+
 		DXKeyboard kbd_;
 		DXMouse    mouse_;
 	private:
@@ -92,13 +94,14 @@ class DXWindow
 
 		void HideCursor() noxnd;
 		void ShowCursor() noxnd;
+
 		void EnableImGuiMouse() noxnd;
 		void DisableImGuiMouse() noxnd;
 
 		void ConfineCursor() noxnd;
 		void FreeCursor() noxnd;
 
-		bool cursorEnabled_ = false;
+		bool cursorEnabled_ = true;
 		int  width_;
 		int  height_;
 		HWND hWnd_;
@@ -106,4 +109,5 @@ class DXWindow
 		// use unique pointer to defer Graphics creation
 		// (b/c it can only be created after the window is initialized)
 		std::unique_ptr<Graphics> pGfx_;
+		std::vector<BYTE> rawBuffer;
 };

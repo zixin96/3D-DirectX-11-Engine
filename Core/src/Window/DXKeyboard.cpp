@@ -5,15 +5,15 @@ bool DXKeyboard::KeyIsPressed(unsigned char keycode) const noexcept
 	return keystates_[keycode];
 }
 
-DXKeyboard::Event DXKeyboard::ReadKey() noexcept
+std::optional<DXKeyboard::Event> DXKeyboard::ReadKey() noexcept
 {
 	if (keybuffer_.size() > 0u)
 	{
-		Event e = keybuffer_.front();
+		DXKeyboard::Event e = keybuffer_.front();
 		keybuffer_.pop();
 		return e;
 	}
-	return Event();
+	return {};
 }
 
 bool DXKeyboard::KeyIsEmpty() const noexcept
@@ -21,7 +21,7 @@ bool DXKeyboard::KeyIsEmpty() const noexcept
 	return keybuffer_.empty();
 }
 
-char DXKeyboard::ReadChar() noexcept
+std::optional<char> DXKeyboard::ReadChar() noexcept
 {
 	if (charbuffer_.size() > 0u)
 	{
@@ -29,7 +29,7 @@ char DXKeyboard::ReadChar() noexcept
 		charbuffer_.pop();
 		return charcode;
 	}
-	return 0;
+	return {};
 }
 
 bool DXKeyboard::CharIsEmpty() const noexcept

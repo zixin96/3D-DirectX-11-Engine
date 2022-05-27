@@ -19,6 +19,8 @@ class App
 		~App() = default;
 	private:
 		void DoFrame();
+		void ShowRawInputWindow();
+		int  x = 0, y = 0;
 
 		// always first initialize IMGUI
 		ImguiManager imgui_{};

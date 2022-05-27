@@ -196,6 +196,18 @@ DXWindow::DXWindow(int width, int height, const char* name)
 	ImGui_ImplWin32_Init(hWnd_);
 	// create graphics object
 	pGfx_ = std::make_unique<Graphics>(hWnd_, width, height);
+
+	// register mouse raw input device (Windows by default doesn't provide raw input data)
+	RAWINPUTDEVICE rid;
+	// raw house here: 
+	rid.usUsagePage = 0x01; // mouse page
+	rid.usUsage     = 0x02; // mouse usage
+	rid.dwFlags     = 0;
+	rid.hwndTarget  = nullptr;
+	if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
+	{
+		throw WND_LAST_EXCEPT();
+	}
 }
 
 DXWindow::~DXWindow()
@@ -312,6 +324,8 @@ LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 				}
 				else
 				{
+					// for example, when you alt+tab out of the window,
+					// you want to free the cursor
 					FreeCursor();
 					ShowCursor();
 				}
@@ -366,6 +380,7 @@ LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 				{
 					if (!mouse_.IsInWindow())
 					{
+						// TODO: What does this do? 
 						SetCapture(hWnd);
 						mouse_.OnMouseEnter();
 						HideCursor();
@@ -489,6 +504,49 @@ LRESULT DXWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 				break;
 			}
 		/************** END MOUSE MESSAGES **************/
+
+		/************** RAW MOUSE MESSAGES **************/
+		case WM_INPUT:
+			{
+				if (!mouse_.RawEnabled())
+				{
+					break;
+				}
+				UINT size;
+				// first get the size of the input data
+				if (GetRawInputData(
+				                    reinterpret_cast<HRAWINPUT>(lParam),
+				                    RID_INPUT,
+				                    nullptr,
+				                    &size,
+				                    sizeof(RAWINPUTHEADER)) == -1)
+				{
+					// bail msg processing if error
+					break;
+				}
+				rawBuffer.resize(size);
+				// read in the input data
+				if (GetRawInputData(
+				                    reinterpret_cast<HRAWINPUT>(lParam),
+				                    RID_INPUT,
+				                    rawBuffer.data(),
+				                    &size,
+				                    sizeof(RAWINPUTHEADER)) != size)
+				{
+					// bail msg processing if error
+					break;
+				}
+				// process the raw input data
+				auto& ri = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+				if (ri.header.dwType == RIM_TYPEMOUSE &&
+				    // only handle mouse raw data if there are movements 
+				    (ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0))
+				{
+					mouse_.OnRawDelta(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
+				}
+				break;
+			}
+		/************** END RAW MOUSE MESSAGES **************/
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -508,6 +566,11 @@ void DXWindow::DisableCursor()
 	HideCursor();
 	DisableImGuiMouse();
 	ConfineCursor();
+}
+
+bool DXWindow::CursorEnabled() const noexcept
+{
+	return cursorEnabled_;
 }
 
 // --------------Cursor Private Helpers---------------------

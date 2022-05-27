@@ -69,7 +69,7 @@ public:
 	bool KeyIsPressed(unsigned char keycode) const noexcept;
 
 	// pull an key event off the event queue
-	Event ReadKey() noexcept;
+	std::optional<Event> ReadKey() noexcept;
 
 	// check if there are any key events in the event queue
 	bool KeyIsEmpty() const noexcept;
@@ -79,7 +79,7 @@ public:
 
 	// char event (used for text input) stuff
 
-	char ReadChar() noexcept;
+	std::optional<char> ReadChar() noexcept;
 	bool CharIsEmpty() const noexcept;
 	void ClearChar() noexcept;
 
