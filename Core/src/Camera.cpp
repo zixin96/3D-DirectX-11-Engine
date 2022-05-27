@@ -1,19 +1,29 @@
 #include "Camera.h"
 #include "imgui/imgui.h"
+#include "Utils/EngineMath.h"
 
 namespace dx = DirectX;
 
+Camera::Camera() noexcept
+{
+	Reset();
+}
+
 DirectX::XMMATRIX Camera::GetMatrix() const noexcept
 {
-	const auto pos = dx::XMVector3Transform(
-		dx::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
-		dx::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f)
-	);
+	using namespace dx;
 
-	return dx::XMMatrixLookAtLH(pos,
-	                            dx::XMVectorZero(),
-	                            dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-		* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
+	const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	// apply the camera rotations to a base vector
+	const auto lookVector = XMVector3Transform(forwardBaseVector,
+	                                           XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f)
+	                                          );
+	// generate camera transform (applied to all objects to arrange them relative
+	// to camera position/orientation in world) from cam position and direction
+	// camera "top" always faces towards +Y (cannot do a barrel roll)
+	const auto camPosition = XMLoadFloat3(&pos);
+	const auto camTarget   = camPosition + lookVector;
+	return XMMatrixLookAtLH(camPosition, camTarget, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 }
 
 void Camera::SpawnControlWindow() noexcept
@@ -21,13 +31,11 @@ void Camera::SpawnControlWindow() noexcept
 	if (ImGui::Begin("Camera"))
 	{
 		ImGui::Text("Position");
-		// TODO: when R is 0, the program crashes (temporary solution: fixed by using 0.2f)
-		ImGui::SliderFloat("R", &r, 0.2f, 80.0f, "%.1f");
-		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
-		ImGui::SliderAngle("Phi", &phi, -89.0f, 89.0f);
+		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
+		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
+		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
 		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pitch, 0.995f * -90.0f, 0.995f * 90.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
 		if (ImGui::Button("Reset"))
 		{
@@ -39,10 +47,31 @@ void Camera::SpawnControlWindow() noexcept
 
 void Camera::Reset() noexcept
 {
-	r = 20.0f;
-	theta = 0.0f;
-	phi = 0.0f;
+	pos   = {0.0f, 7.5f, -18.0f};
 	pitch = 0.0f;
-	yaw = 0.0f;
-	roll = 0.0f;
+	yaw   = 0.0f;
+}
+
+// dx, dy: mouse delta
+void Camera::Rotate(float dx, float dy) noexcept
+{
+	// yaw: spin around (we want it wrap around)
+	yaw = wrap_angle(yaw + dx * rotationSpeed);
+	// pitch: look up and down (we want it clamped)
+	// we need to * 0.995f so that look vector never coincides with up vector
+	pitch = std::clamp(pitch + dy * rotationSpeed, 0.995f * -PI / 2.0f, 0.995f * PI / 2.0f);
+}
+
+void Camera::Translate(DirectX::XMFLOAT3 translation) noexcept
+{
+	dx::XMStoreFloat3(&translation, dx::XMVector3Transform(
+	                                                       dx::XMLoadFloat3(&translation),
+	                                                       dx::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f) *
+	                                                       dx::XMMatrixScaling(travelSpeed, travelSpeed, travelSpeed)
+	                                                      ));
+	pos = {
+		pos.x + translation.x,
+		pos.y + translation.y,
+		pos.z + translation.z
+	};
 }

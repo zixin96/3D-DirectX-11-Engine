@@ -33,23 +33,21 @@ class Mesh : public DrawableCommon<Mesh>
 class Node
 {
 	friend class Model;
-	friend class ModelWindow;
 	public:
-		Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noxnd;
+		Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noxnd;
 		void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
 		void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
+		int  GetId() const noexcept;
+		void ShowTree(Node*& pSelectedNode) const noexcept;
 	private:
 		void AddChild(std::unique_ptr<Node> pChild) noxnd;
-		void ShowTree(int& nodeIndex, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept;
-	private:
+
 		std::string                        name_;
-		std::vector<std::unique_ptr<Node>> childPtrs_;
-		// Individual node only retains reference to the meshes via raw pointers
-		std::vector<Mesh*> meshPtrs_;
-		// transform relative to its parent
-		DirectX::XMFLOAT4X4 transform_;
-		// transform from the GUI window
-		DirectX::XMFLOAT4X4 appliedTransform_;
+		int                                id_;               // each node has a unique ID to identify them in the tree
+		std::vector<std::unique_ptr<Node>> childPtrs_;        // Node owns a set of children node
+		std::vector<Mesh*>                 meshPtrs_;         // Individual node only retains reference to the meshes via raw pointers
+		DirectX::XMFLOAT4X4                transform_;        // transform relative to its parent
+		DirectX::XMFLOAT4X4                appliedTransform_; // transform from the GUI window
 };
 
 class Model
@@ -62,11 +60,9 @@ class Model
 		~Model() noxnd;
 	private:
 		static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
-		std::unique_ptr<Node>        ParseNode(const aiNode& node) noexcept;
+		std::unique_ptr<Node>        ParseNode(int& nextId, const aiNode& node) noexcept;
 	private:
-		// we only need to store the root pointer, which will lead us to the rest of the nodes
-		std::unique_ptr<Node> pRoot_;
-		// Model owns the meshes (thus, we use unique pointers here)
-		std::vector<std::unique_ptr<Mesh>> meshPtrs_;
+		std::unique_ptr<Node>              pRoot_;    // we only need to store the root pointer, which will lead us to the rest of the nodes
+		std::vector<std::unique_ptr<Mesh>> meshPtrs_; // Model owns the meshes (thus, we use unique pointers here)
 		std::unique_ptr<class ModelWindow> pWindow_;
 };

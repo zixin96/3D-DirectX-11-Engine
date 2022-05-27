@@ -19,9 +19,8 @@ class App
 		~App() = default;
 	private:
 		void DoFrame();
-		void ShowRawInputWindow();
-		int  x = 0, y = 0;
-
+		void ShowImguiDemoWindow();
+		bool showDemoWindow = false;
 		// always first initialize IMGUI
 		ImguiManager imgui_{};
 		// Please specify a resolution with aspect ratio = 16:9

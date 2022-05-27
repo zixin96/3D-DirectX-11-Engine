@@ -75,8 +75,10 @@ DirectX::XMMATRIX Mesh::GetTransformXM() const noexcept
 // ---------------------------------------------------------------------------
 
 // each node has its own name (for identifying it in the tree), a set of meshes, and its transform
-Node::Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noxnd
+// Node
+Node::Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noxnd
 	:
+	id_(id),
 	meshPtrs_(std::move(meshPtrs)),
 	name_(name)
 {
@@ -112,13 +114,10 @@ void Node::AddChild(std::unique_ptr<Node> pChild) noxnd
 }
 
 // recursively show nodes in the tree UI
-// nodeIndexTracked: keep track of current unique index so that we can assign each node a unique index
-// selectedIndex: current selected node index (it's optional whether or not one of the nodes is selected)
-void Node::ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept
+void Node::ShowTree(Node*& pSelectedNode) const noexcept
 {
-	// nodeIndex serves as the uid for gui tree nodes, incremented throughout recursion
-	const int currentNodeIndex = nodeIndexTracked;
-	nodeIndexTracked++;
+	// if there is no selected node, set selectedId to an impossible value
+	const int selectedId = (pSelectedNode == nullptr) ? -1 : pSelectedNode->GetId();
 
 	// build up flags for current node
 
@@ -127,17 +126,16 @@ void Node::ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, No
 	// current node is selected only if the current node index == selected node index
 	// if the current node has no children, it is a leaf node
 	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
-	                        | ((currentNodeIndex == selectedIndex.value_or(-1)) ? ImGuiTreeNodeFlags_Selected : 0)
+	                        | ((GetId() == selectedId) ? ImGuiTreeNodeFlags_Selected : 0)
 	                        | ((childPtrs_.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0);
 	// render this node
 	// to use an integer as the node identifier, we must cast it to (void*)(intptr_t) 
 	const auto expanded = ImGui::TreeNodeEx(
-	                                        (void*)(intptr_t)currentNodeIndex, node_flags, name_.c_str()
+	                                        (void*)(intptr_t)GetId(), node_flags, name_.c_str()
 	                                       );
 	// processing for selecting node
 	if (ImGui::IsItemClicked())
 	{
-		selectedIndex = currentNodeIndex;
 		pSelectedNode = const_cast<Node*>(this);
 	}
 
@@ -146,10 +144,15 @@ void Node::ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, No
 	{
 		for (const auto& pChild : childPtrs_)
 		{
-			pChild->ShowTree(nodeIndexTracked, selectedIndex, pSelectedNode);
+			pChild->ShowTree(pSelectedNode);
 		}
 		ImGui::TreePop();
 	}
+}
+
+int Node::GetId() const noexcept
+{
+	return id_;
 }
 
 void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
@@ -174,7 +177,7 @@ class ModelWindow
 				// 2 columns with a divider in-between
 				ImGui::Columns(2, nullptr, true);
 				// start the recursion to generate the tree widget
-				root.ShowTree(nodeIndexTracker, selectedIndex_, pSelectedNode_);
+				root.ShowTree(pSelectedNode_);
 
 				ImGui::NextColumn();
 				// the next column contains all the controls
@@ -182,7 +185,7 @@ class ModelWindow
 				{
 					// access selected node transformation
 					// if the current index doesn't exist in the map, this will create a new one
-					auto& transform = transforms_[*selectedIndex_];
+					auto& transform = transforms_[pSelectedNode_->GetId()];
 					ImGui::Text("Orientation");
 					ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
 					ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
@@ -198,7 +201,8 @@ class ModelWindow
 
 		dx::XMMATRIX GetTransform() const noexcept
 		{
-			const auto& transform = transforms_.at(*selectedIndex_);
+			assert(pSelectedNode_ != nullptr);
+			const auto& transform = transforms_.at(pSelectedNode_->GetId());
 			return
 					dx::XMMatrixRotationRollPitchYaw(transform.roll, transform.pitch, transform.yaw) *
 					dx::XMMatrixTranslation(transform.x, transform.y, transform.z);
@@ -210,8 +214,7 @@ class ModelWindow
 		}
 
 	private:
-		std::optional<int> selectedIndex_;
-		Node*              pSelectedNode_;
+		Node* pSelectedNode_;
 
 		struct TransformParameters
 		{
@@ -249,8 +252,8 @@ Model::Model(Graphics& gfx, const std::string fileName)
 	{
 		meshPtrs_.push_back(ParseMesh(gfx, *pScene->mMeshes[i]));
 	}
-
-	pRoot_ = ParseNode(*pScene->mRootNode);
+	int nextId = 0;
+	pRoot_     = ParseNode(nextId, *pScene->mRootNode);
 }
 
 void Model::Draw(Graphics& gfx) const noxnd
@@ -275,7 +278,6 @@ Model::~Model() noxnd
 
 std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 {
-	namespace dx = DirectX;
 	using D3DEngine::VertexLayout;
 
 	D3DEngine::VertexBuffer vbuf(std::move(
@@ -329,7 +331,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 	return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
 }
 
-std::unique_ptr<Node> Model::ParseNode(const aiNode& node) noexcept
+std::unique_ptr<Node> Model::ParseNode(int& nextId, const aiNode& node) noexcept
 {
 	namespace dx = DirectX;
 	// parse this node
@@ -343,12 +345,12 @@ std::unique_ptr<Node> Model::ParseNode(const aiNode& node) noexcept
 		const auto meshIdx = node.mMeshes[i];
 		curMeshPtrs.push_back(meshPtrs_.at(meshIdx).get());
 	}
-	auto pNode = std::make_unique<Node>(node.mName.C_Str(), std::move(curMeshPtrs), transform);
+	auto pNode = std::make_unique<Node>(nextId++, node.mName.C_Str(), std::move(curMeshPtrs), transform);
 
 	// parse its children nodes
 	for (size_t i = 0; i < node.mNumChildren; i++)
 	{
-		pNode->AddChild(ParseNode(*node.mChildren[i]));
+		pNode->AddChild(ParseNode(nextId, *node.mChildren[i]));
 	}
 
 	return pNode;

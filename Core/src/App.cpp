@@ -23,18 +23,64 @@ void App::DoFrame()
 
 	while (const auto e = wnd_.kbd_.ReadKey())
 	{
-		if (e->IsPress() && e->GetCode() == VK_INSERT)
+		if (!e->IsPress())
 		{
-			if (wnd_.CursorEnabled())
-			{
-				wnd_.DisableCursor();
-				wnd_.mouse_.EnableRaw();
-			}
-			else
-			{
-				wnd_.EnableCursor();
-				wnd_.mouse_.DisableRaw();
-			}
+			continue;
+		}
+
+		switch (e->GetCode())
+		{
+			case VK_F1:
+				if (wnd_.CursorEnabled())
+				{
+					wnd_.DisableCursor();
+					wnd_.mouse_.EnableRaw();
+				}
+				else
+				{
+					wnd_.EnableCursor();
+					wnd_.mouse_.DisableRaw();
+				}
+				break;
+			case VK_ESCAPE:
+				showDemoWindow = true;
+				break;
+		}
+	}
+
+	if (!wnd_.CursorEnabled())
+	{
+		if (wnd_.kbd_.KeyIsPressed('W'))
+		{
+			cam_.Translate({0.0f, 0.0f, dt});
+		}
+		if (wnd_.kbd_.KeyIsPressed('A'))
+		{
+			cam_.Translate({-dt, 0.0f, 0.0f});
+		}
+		if (wnd_.kbd_.KeyIsPressed('S'))
+		{
+			cam_.Translate({0.0f, 0.0f, -dt});
+		}
+		if (wnd_.kbd_.KeyIsPressed('D'))
+		{
+			cam_.Translate({dt, 0.0f, 0.0f});
+		}
+		if (wnd_.kbd_.KeyIsPressed('R'))
+		{
+			cam_.Translate({0.0f, dt, 0.0f});
+		}
+		if (wnd_.kbd_.KeyIsPressed('F'))
+		{
+			cam_.Translate({0.0f, -dt, 0.0f});
+		}
+	}
+
+	while (const auto delta = wnd_.mouse_.ReadRawDelta())
+	{
+		if (!wnd_.CursorEnabled())
+		{
+			cam_.Rotate((float)delta->x, (float)delta->y);
 		}
 	}
 
@@ -42,7 +88,7 @@ void App::DoFrame()
 	cam_.SpawnControlWindow();
 	light_.SpawnControlWindow();
 	nano.ShowWindow();
-	ShowRawInputWindow();
+	ShowImguiDemoWindow();
 
 	// present
 	wnd_.Gfx().EndFrame();
@@ -62,17 +108,10 @@ int App::Go()
 	}
 }
 
-void App::ShowRawInputWindow()
+void App::ShowImguiDemoWindow()
 {
-	while (const auto d = wnd_.mouse_.ReadRawDelta())
+	if (showDemoWindow)
 	{
-		x += d->x;
-		y += d->y;
+		ImGui::ShowDemoWindow(&showDemoWindow);
 	}
-	if (ImGui::Begin("Raw Input"))
-	{
-		ImGui::Text("Tally: (%d,%d)", x, y);
-		ImGui::Text("Cursor: %s", wnd_.CursorEnabled() ? "enabled" : "disabled");
-	}
-	ImGui::End();
 }
