@@ -10,10 +10,10 @@ file(GLOB_RECURSE HEADER_FILES LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_S
 
 include_directories(src)
 include_directories(../deps/src/imgui)
-
+ 
 # add application icon
 set(APP_ICON_RESOURCE_WINDOWS "src/WindowsResource/appico.rc")
-
+ 
 # Note: WIN32 is added here by Chili tutorial
 add_executable(${PROJECT_NAME} WIN32 ${SRC_FILES} ${HEADER_FILES} ${APP_ICON_RESOURCE_WINDOWS})
 if(MSVC)
@@ -58,6 +58,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/TexturedPhon
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongAssVS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongAssPS.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSSpecMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSNormalMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 
 # pch boosts our fucking compiler time
 set(HEADER_PCH_FILES

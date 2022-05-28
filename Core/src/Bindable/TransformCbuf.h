@@ -11,15 +11,19 @@ namespace D3DEngine
 	 */
 	class TransformCbuf : public Bindable
 	{
-		struct Transforms
-		{
-			DirectX::XMMATRIX modelViewProj;
-			DirectX::XMMATRIX modelView;
-		};
-
 		public:
 			TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot = 0u);
 			void Bind(Graphics& gfx) noexcept override;
+		protected:
+			// Transforms struct needs to be available for children
+			struct Transforms
+			{
+				DirectX::XMMATRIX modelViewProj;
+				DirectX::XMMATRIX modelView;
+			};
+
+			void       UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept;
+			Transforms GetTransforms(Graphics& gfx) noexcept;
 		private:
 			// Each drawable has a single vertex constant buffer that is shared among all instances. 
 			// We can overwrite it with the data of the new instance when necessary

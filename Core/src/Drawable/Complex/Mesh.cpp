@@ -309,7 +309,7 @@ namespace D3DEngine
 			auto&    material = *pMaterials[mesh.mMaterialIndex];
 			aiString texFileName;
 			material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
-			bindablePtrs.push_back(Texture::Resolve(gfx, base + texFileName.C_Str()));
+			bindablePtrs.push_back(Texture::Resolve(gfx, base + texFileName.C_Str(), 0));
 
 			// not all meshes have specular map
 			if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)

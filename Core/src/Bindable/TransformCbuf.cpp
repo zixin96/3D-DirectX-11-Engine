@@ -12,24 +12,27 @@ namespace D3DEngine
 		}
 	}
 
-	// update and bind vertex constant buffer
 	void TransformCbuf::Bind(Graphics& gfx) noexcept
 	{
-		const auto modelView = parent_.GetTransformXM() * gfx.GetCamera();
+		UpdateBindImpl(gfx, GetTransforms(gfx));
+	}
 
-		const Transforms tf =
-		{
-			.modelViewProj = DirectX::XMMatrixTranspose(
-			                                            modelView *
-			                                            gfx.GetProjection()
-			                                           ),
-			.modelView = DirectX::XMMatrixTranspose(
-			                                        modelView
-			                                       ),
-		};
-
+	void TransformCbuf::UpdateBindImpl(Graphics& gfx, const Transforms& tf) noexcept
+	{
 		pVertexCbuf_->Update(gfx, tf);
 		pVertexCbuf_->Bind(gfx);
+	}
+
+	TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx) noexcept
+	{
+		const auto modelView = parent_.GetTransformXM() * gfx.GetCamera();
+		return {
+			DirectX::XMMatrixTranspose(
+			                           modelView *
+			                           gfx.GetProjection()
+			                          ),
+			DirectX::XMMatrixTranspose(modelView)
+		};
 	}
 
 	std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVertexCbuf_;
