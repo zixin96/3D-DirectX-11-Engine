@@ -165,10 +165,19 @@ namespace D3DEngine
 
 
 	// VertexBuffer
-	RawVertexBufferWithLayout::RawVertexBufferWithLayout(DynamicVertexLayout layout) noxnd
-		:
-		layout(std::move(layout))
+	RawVertexBufferWithLayout::RawVertexBufferWithLayout(DynamicVertexLayout layout, size_t size) noxnd
+		: layout(std::move(layout))
 	{
+		Resize(size);
+	}
+
+	void RawVertexBufferWithLayout::Resize(size_t newSize) noxnd
+	{
+		const auto size = Size();
+		if (size < newSize)
+		{
+			buffer.resize(buffer.size() + layout.Size() * (newSize - size));
+		}
 	}
 
 	const char* RawVertexBufferWithLayout::GetData() const noxnd

@@ -246,7 +246,8 @@ namespace D3DEngine
 	class RawVertexBufferWithLayout
 	{
 		public:
-			RawVertexBufferWithLayout(DynamicVertexLayout layout) noxnd;
+			RawVertexBufferWithLayout(DynamicVertexLayout layout, size_t size = 0u) noxnd;
+			void                       Resize(size_t newSize) noxnd;
 			const char*                GetData() const noxnd;
 			const DynamicVertexLayout& GetLayout() const noexcept;
 			size_t                     Size() const noxnd;

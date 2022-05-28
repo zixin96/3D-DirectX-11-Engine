@@ -4,6 +4,7 @@
 #include "Imgui/ImguiManager.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "TestCube.h"
 #include "TestPlane.h"
 #include "Drawable/Complex/Mesh.h"
 
@@ -30,5 +31,6 @@ class App
 		D3DEngine::PointLight light_{wnd_.Gfx()};
 		D3DEngine::Model      nano{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
 		D3DEngine::Model      nano2{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
-		D3DEngine::TestPlane  plane{wnd_.Gfx(), 3.0f};
+		//D3DEngine::TestPlane  plane{wnd_.Gfx(), 3.0f};
+		D3DEngine::TestCube   cube{ wnd_.Gfx(), 4.0f};
 };
