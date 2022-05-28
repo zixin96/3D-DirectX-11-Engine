@@ -1,9 +1,5 @@
-// This buffer is set per frame for the light (default to slot 0)
 cbuffer LightCBuf : register(b0)
 {
-// we can update lighting parameters every frame
-
-// HSLL expects 16-byte alignment. Thus, in C++ side, we should use alignas or add paddings to ensure proper alignment
 float3 lightPosCamSpace;
 float3 ambient;
 float3 diffuseColor;
@@ -13,7 +9,6 @@ float  attLin;
 float  attQuad;
 };
 
-// This buffer is set per object for each object we want to render (default to slot 1)
 cbuffer ObjectCBuf : register(b1)
 {
 float specularIntensity;

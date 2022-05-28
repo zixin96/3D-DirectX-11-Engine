@@ -8,9 +8,10 @@ static GDIPlusManager gdipm;
 
 App::App()
 {
-	wall_.SetRootTransform(dx::XMMatrixTranslation(5.0f, 0.0f, 0.0f));
-	tp_.SetPos({1.5f, 0.0f, 0.0f});
-	cube_.SetPos({-1.5f, 0.0f, 0.0f});
+	// wall_.SetRootTransform(dx::XMMatrixTranslation(5.0f, 0.0f, 0.0f));
+	// tp_.SetPos({1.5f, 0.0f, 0.0f});
+	// cube_.SetPos({-1.5f, 0.0f, 0.0f});
+
 	wnd_.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
 }
 
@@ -21,9 +22,11 @@ void App::DoFrame()
 	wnd_.Gfx().SetCamera(cam_.GetMatrix());
 	light_.Bind(wnd_.Gfx(), cam_.GetMatrix());
 
-	wall_.Draw(wnd_.Gfx());
-	tp_.Draw(wnd_.Gfx());
-	cube_.Draw(wnd_.Gfx());
+	// wall_.Draw(wnd_.Gfx());
+	// tp_.Draw(wnd_.Gfx());
+	// cube_.Draw(wnd_.Gfx());
+
+	gobber.Draw(wnd_.Gfx());
 	light_.Draw(wnd_.Gfx());
 
 	while (const auto e = wnd_.kbd_.ReadKey())
@@ -89,9 +92,11 @@ void App::DoFrame()
 	// imgui windows
 	cam_.SpawnControlWindow();
 	light_.SpawnControlWindow();
-	wall_.ShowWindow("Wall");
-	tp_.SpawnControlWindow(wnd_.Gfx());
-	cube_.SpawnControlWindow(wnd_.Gfx());
+	// wall_.ShowWindow("Wall");
+	// tp_.SpawnControlWindow(wnd_.Gfx());
+	// cube_.SpawnControlWindow(wnd_.Gfx());
+	gobber.ShowWindow(wnd_.Gfx(), "gobber");
+
 	// present
 	wnd_.Gfx().EndFrame();
 }

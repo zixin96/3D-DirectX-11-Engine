@@ -21,9 +21,9 @@ Surface::Surface(unsigned int width, unsigned int height) noexcept
 
 Surface& Surface::operator=(Surface&& donor) noexcept
 {
-	width_ = donor.width_;
-	height_ = donor.height_;
-	pBuffer_ = std::move(donor.pBuffer_);
+	width_         = donor.width_;
+	height_        = donor.height_;
+	pBuffer_       = std::move(donor.pBuffer_);
 	donor.pBuffer_ = nullptr;
 	return *this;
 }
@@ -90,10 +90,10 @@ const Surface::Color* Surface::GetBufferPtrConst() const noexcept
 
 Surface Surface::FromFile(const std::string& name)
 {
-	unsigned int width = 0;
-	unsigned int height = 0;
+	unsigned int             width  = 0;
+	unsigned int             height = 0;
 	std::unique_ptr<Color[]> pBuffer;
-
+	bool                     alphaLoaded = false;
 	{
 		// convert filenam to wide string (for Gdiplus)
 		wchar_t wideName[512];
@@ -107,8 +107,8 @@ Surface Surface::FromFile(const std::string& name)
 			throw Exception(__LINE__, __FILE__, ss.str());
 		}
 
-		width = bitmap.GetWidth();
-		height = bitmap.GetHeight();
+		width   = bitmap.GetWidth();
+		height  = bitmap.GetHeight();
 		pBuffer = std::make_unique<Color[]>(width * height);
 
 		for (unsigned int y = 0; y < height; y++)
@@ -118,18 +118,28 @@ Surface Surface::FromFile(const std::string& name)
 				Gdiplus::Color c;
 				bitmap.GetPixel(x, y, &c);
 				pBuffer[y * width + x] = c.GetValue();
+				// if there is any pixel with alpha != 255, we have an active alpha channel
+				if (c.GetAlpha() != 255)
+				{
+					alphaLoaded = true;
+				}
 			}
 		}
 	}
 
-	return Surface(width, height, std::move(pBuffer));
+	return Surface(width, height, std::move(pBuffer), alphaLoaded);
+}
+
+bool Surface::AlphaLoaded() const noexcept
+{
+	return alphaLoaded;
 }
 
 void Surface::Save(const std::string& filename) const
 {
 	auto GetEncoderClsid = [&filename](const WCHAR* format, CLSID* pClsid) -> void
 	{
-		UINT num = 0; // number of image encoders
+		UINT num  = 0; // number of image encoders
 		UINT size = 0; // size of the image encoder array in bytes
 
 		Gdiplus::ImageCodecInfo* pImageCodecInfo = nullptr;
@@ -165,7 +175,7 @@ void Surface::Save(const std::string& filename) const
 		free(pImageCodecInfo);
 		std::stringstream ss;
 		ss << "Saving surface to [" << filename <<
-			"]: failed to get encoder; failed to find matching encoder.";
+				"]: failed to get encoder; failed to find matching encoder.";
 		throw Exception(__LINE__, __FILE__, ss.str());
 	};
 
@@ -193,11 +203,12 @@ void Surface::Copy(const Surface& src) noxnd
 	memcpy(pBuffer_.get(), src.pBuffer_.get(), width_ * height_ * sizeof(Color));
 }
 
-Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept
+Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam, bool alphaLoaded) noexcept
 	:
 	width_(width),
 	height_(height),
-	pBuffer_(std::move(pBufferParam))
+	pBuffer_(std::move(pBufferParam)),
+	alphaLoaded(alphaLoaded)
 {
 }
 
@@ -214,7 +225,7 @@ const char* Surface::Exception::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << DXException::what() << std::endl
-		<< "[Note] " << GetNote();
+			<< "[Note] " << GetNote();
 	whatBuffer_ = oss.str();
 	return whatBuffer_.c_str();
 }

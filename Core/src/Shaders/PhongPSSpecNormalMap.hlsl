@@ -1,9 +1,5 @@
-// This buffer is set per frame for the light (default to slot 0)
 cbuffer LightCBuf : register(b0)
 {
-// we can update lighting parameters every frame
-
-// HSLL expects 16-byte alignment. Thus, in C++ side, we should use alignas or add paddings to ensure proper alignment
 float3 lightPosCamSpace;
 float3 ambient;
 float3 diffuseColor;
@@ -13,10 +9,15 @@ float  attLin;
 float  attQuad;
 };
 
-cbuffer ObjectCBuf : register(b1)
+cbuffer ObjectCBuf
 {
-bool  normalMapEnabled;
-float padding[3];
+bool normalMapEnabled;
+bool specularMapEnabled;
+// does the specular texture map has alpha value? 
+bool   hasGloss;
+float  specularPowerConst;
+float3 specularColor;
+float  specularMapWeight;
 };
 
 Texture2D diffuseMap : register(t0);
@@ -38,7 +39,7 @@ float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, float
 		                                   );
 		// unpack the normal from map into tangent space
 		const float3 normalSample = normalMap.Sample(splr, tc).xyz;
-        normalCamSpace = normalSample * 2.0f - 1.0f;
+		normalCamSpace            = normalSample * 2.0f - 1.0f;
 
 		// bring normal from tanspace into view space
 		normalCamSpace = mul(normalCamSpace, tanToView);
@@ -58,21 +59,29 @@ float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, float
 	const float3 w = nHat * dot(vToL, nHat);
 	const float3 r = w * 2.0f - vToL;
 	// calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
-    const float4 specularSample = specularMap.Sample(splr, tc);
-	// assume rgb is color intensity, a is power
-	const float3 specularReflectionColor = specularSample.rgb;
-
-	// we cannot directly use the alpha channel sampled from the specular map because it ranges from 0.0f to 1.0f, whereas specular power ranges from 1 to 100s
-	// so there we map the sampled alpha to a larger range (ask original author of the mesh to obtain the intended mapping)
-	// linear scale: 
-	// const float  specularPower = specularSample.a * specularPowerFactor;
-	// exponential scale: 
-	const float specularPower = pow(2.0f, specularSample.a * 13.0f);
-
+	float3 specularReflectionColor;
+	float  specularPower = specularPowerConst;
+	if (specularMapEnabled)
+	{
+		const float4 specularSample = specularMap.Sample(splr, tc);
+		// assume rgb is color intensity, a (if exists) is specular power
+		specularReflectionColor = specularSample.rgb * specularMapWeight;
+		if (hasGloss)
+		{
+			// we cannot directly use the alpha channel sampled from the specular map because it ranges from 0.0f to 1.0f, whereas specular power ranges from 1 to 100s
+			// so there we map the sampled alpha to a larger range (ask original author of the mesh to obtain the intended mapping)
+			// Here, we do exponential mapping:
+			specularPower = pow(2.0f, specularSample.a * 13.0f);
+		}
+	}
+	else
+	{
+		specularReflectionColor = specularColor;
+	}
 	const float3 specular = att
 	                        * (diffuseColor * diffuseIntensity)
 	                        * pow(max(0.0f, dot(normalize(r), normalize(-posCamSpace))), specularPower);
 
 	// final color
-    return float4(saturate((diffuse + ambient) * diffuseMap.Sample(splr, tc).rgb + specular * specularReflectionColor), 1.0f);
+	return float4(saturate((diffuse + ambient) * diffuseMap.Sample(splr, tc).rgb + specular * specularReflectionColor), 1.0f);
 }

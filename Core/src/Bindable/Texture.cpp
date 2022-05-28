@@ -16,6 +16,7 @@ namespace D3DEngine
 
 		// load surface
 		const auto s = Surface::FromFile(path);
+		hasAlpha     = s.AlphaLoaded();
 
 		// Describes a 2D texture
 		D3D11_TEXTURE2D_DESC textureDesc = {
@@ -76,5 +77,10 @@ namespace D3DEngine
 	std::string Texture::GetUID() const noexcept
 	{
 		return GenerateUID(path_, slot_);
+	}
+
+	bool Texture::HasAlpha() const noexcept
+	{
+		return hasAlpha;
 	}
 }

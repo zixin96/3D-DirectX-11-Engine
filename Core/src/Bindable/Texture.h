@@ -7,13 +7,15 @@ namespace D3DEngine
 	{
 		public:
 			Texture(Graphics& gfx, const std::string& path, UINT slot = 0);
-			void                             Bind(Graphics& gfx) noexcept override;
+			void                            Bind(Graphics& gfx) noexcept override;
 			static std::shared_ptr<Texture> Resolve(Graphics& gfx, const std::string& path, UINT slot = 0);
-			static std::string               GenerateUID(const std::string& path, UINT slot = 0);
-			std::string                      GetUID() const noexcept override;
+			static std::string              GenerateUID(const std::string& path, UINT slot = 0);
+			std::string                     GetUID() const noexcept override;
+			bool                            HasAlpha() const noexcept;
 		private:
 			unsigned int slot_;
 		protected:
+			bool                                             hasAlpha = false;
 			std::string                                      path_;
 			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView_;
 	};

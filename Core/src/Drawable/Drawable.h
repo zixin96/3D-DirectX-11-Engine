@@ -14,7 +14,6 @@ namespace D3DEngine
 			Drawable(const Drawable&) = delete;
 			virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 			void                      Draw(Graphics& gfx) const noxnd;
-		protected:
 			// query instance of bindable to be changed
 			template <class T>
 			T* QueryBindable() noexcept
@@ -29,6 +28,7 @@ namespace D3DEngine
 				return nullptr;
 			}
 
+		protected:
 			void AddBind(std::shared_ptr<Bindable> bind) noxnd;
 		private:
 			const IndexBuffer*                     pIndexBuffer_ = nullptr;

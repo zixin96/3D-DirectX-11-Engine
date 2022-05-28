@@ -138,11 +138,13 @@ public:
 	static Surface FromFile(const std::string& name);
 	void Save(const std::string& filename) const;
 	void Copy(const Surface& src) noxnd;
+	bool AlphaLoaded() const noexcept;
 private:
-	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;
+	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam, bool alphaLoaded = false) noexcept;
 private:
 	// store image data as an array of Color
 	std::unique_ptr<Color[]> pBuffer_;
 	unsigned int width_;
 	unsigned int height_;
+	bool alphaLoaded = false;
 };
