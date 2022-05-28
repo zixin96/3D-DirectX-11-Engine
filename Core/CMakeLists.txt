@@ -60,6 +60,11 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongAssPS.h
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSSpecMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSNormalMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongVSNormalMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSSpecNormalMap.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/PhongPSNormalMapObject.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+
+
 # pch boosts our fucking compiler time
 set(HEADER_PCH_FILES
     <unordered_map>

@@ -12,7 +12,7 @@ namespace D3DEngine
 	{
 		public:
 			// update constant buffer every frame
-			void Update(Graphics& gfx, const C& consts)
+			void Update(Graphics& gfx, const C& constantData)
 			{
 				INFOMAN(gfx);
 
@@ -32,21 +32,21 @@ namespace D3DEngine
 					               &msr
 				               ));
 
-				memcpy(msr.pData, &consts, sizeof(consts));
+				memcpy(msr.pData, &constantData, sizeof(constantData));
 
 				// Invalidate the pointer to a resource and reenable the GPU's access to that resource
 				GetContext(gfx)->Unmap(pConstantBuffer_.Get(), 0u);
 			}
 
 			// create a constant buffer (that binds to slot 0 by default) with initializing data 
-			ConstantBuffer(Graphics& gfx, const C& consts, UINT slot = 0u)
+			ConstantBuffer(Graphics& gfx, const C& constantData, UINT slot = 0u)
 				:
 				slot_(slot)
 			{
 				INFOMAN(gfx);
 
 				D3D11_BUFFER_DESC cbd = {
-					.ByteWidth = sizeof(consts),
+					.ByteWidth = sizeof(constantData),
 					// dynamic b/c we update constant buffer every frame
 					.Usage = D3D11_USAGE_DYNAMIC,
 					.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
@@ -58,7 +58,7 @@ namespace D3DEngine
 				};
 
 				D3D11_SUBRESOURCE_DATA csd = {
-					.pSysMem = &consts,
+					.pSysMem = &constantData,
 				};
 
 				GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer_));

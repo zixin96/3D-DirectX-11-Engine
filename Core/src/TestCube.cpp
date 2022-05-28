@@ -24,7 +24,7 @@ namespace D3DEngine
 		auto pvsbc = pvs->GetBytecode();
 		AddBind(std::move(pvs));
 
-		AddBind(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSNormalMap.cso"));
+		AddBind(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSNormalMapObject.cso"));
 
 		AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 

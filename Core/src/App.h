@@ -29,8 +29,7 @@ class App
 		float                 speedFactor_{1.f};
 		Camera                cam_{};
 		D3DEngine::PointLight light_{wnd_.Gfx()};
-		D3DEngine::Model      nano{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
-		D3DEngine::Model      nano2{wnd_.Gfx(), "Models/nano_textured/nanosuit.obj"};
-		//D3DEngine::TestPlane  plane{wnd_.Gfx(), 3.0f};
-		D3DEngine::TestCube   cube{ wnd_.Gfx(), 4.0f};
+		D3DEngine::Model      wall_{wnd_.Gfx(), "Models/brick_wall/brick_wall.obj"};
+		D3DEngine::TestPlane tp_{wnd_.Gfx(), 1.0};
+		D3DEngine::TestCube  cube_{wnd_.Gfx(), 2.0};
 };

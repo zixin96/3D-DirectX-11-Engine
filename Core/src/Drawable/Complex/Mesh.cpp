@@ -157,8 +157,6 @@ namespace D3DEngine
 			{
 				// window name defaults to "Model"
 				windowName = windowName ? windowName : "Model";
-				// need an ints to track node indices
-				int nodeIndexTracker = 0;
 				if (ImGui::Begin(windowName))
 				{
 					// 2 columns with a divider in-between
@@ -227,7 +225,8 @@ namespace D3DEngine
 		                                       aiProcess_Triangulate |
 		                                       aiProcess_JoinIdenticalVertices |
 		                                       aiProcess_ConvertToLeftHanded |
-		                                       aiProcess_GenNormals
+		                                       aiProcess_GenNormals |
+		                                       aiProcess_CalcTangentSpace
 		                                      );
 
 		if (pScene == nullptr)
@@ -260,18 +259,23 @@ namespace D3DEngine
 		pWindow_->Show(windowName, *pRoot_);
 	}
 
+	void Model::SetRootTransform(DirectX::FXMMATRIX tf) noexcept
+	{
+		pRoot_->SetAppliedTransform(tf);
+	}
+
 	Model::~Model() noxnd
 	{
 	}
 
 	std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials)
 	{
-		using D3DEngine::DynamicVertexLayout;
-
 		RawVertexBufferWithLayout vbuf(std::move(
 		                                         DynamicVertexLayout{}
 		                                         .Append(DynamicVertexLayout::Position3D)
 		                                         .Append(DynamicVertexLayout::Normal)
+		                                         .Append(DynamicVertexLayout::Tangent)
+		                                         .Append(DynamicVertexLayout::Bitangent)
 		                                         .Append(DynamicVertexLayout::Texture2D)
 		                                        ));
 
@@ -280,6 +284,8 @@ namespace D3DEngine
 			vbuf.EmplaceBack(
 			                 *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[i]),
 			                 *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i]),
+			                 *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mTangents[i]),
+			                 *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mBitangents[i]),
 			                 *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][i]) // it's possible for a vertex to have separate uv coords for different textures, but usually the textures line up so that only 1 coord is needed to lookup into all of them 
 			                );
 		}
@@ -298,7 +304,7 @@ namespace D3DEngine
 		std::vector<std::shared_ptr<Bindable>> bindablePtrs;
 
 		using namespace std::string_literals;
-		const auto base = "Models/nano_textured/"s;
+		const auto base = "Models/brick_wall/"s;
 
 		bool hasSpecularMap = false;
 		// set a default shininess 
@@ -324,6 +330,8 @@ namespace D3DEngine
 				material.Get(AI_MATKEY_SHININESS, shininess);
 			}
 
+			material.GetTexture(aiTextureType_NORMALS, 0, &texFileName);
+			bindablePtrs.push_back(Texture::Resolve(gfx, base + texFileName.C_Str(), 2));
 			bindablePtrs.push_back(Sampler::Resolve(gfx));
 		}
 
@@ -332,7 +340,7 @@ namespace D3DEngine
 		bindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
 
 
-		auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongAssVS.cso");
+		auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongVSNormalMap.cso");
 		auto pvsbc = pvs->GetBytecode();
 		bindablePtrs.push_back(std::move(pvs));
 
@@ -340,16 +348,24 @@ namespace D3DEngine
 
 		if (hasSpecularMap)
 		{
-			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSSpecMap.cso"));
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSSpecNormalMap.cso"));
+
+			struct PSMaterialConstant
+			{
+				BOOL  normalMapEnabled = TRUE;
+				float padding[3];
+			}         pmc;
+			bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 		}
 		else
 		{
-			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongAssPS.cso"));
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSNormalMap.cso"));
 			struct PSMaterialConstant
 			{
-				float specularIntensity = 0.8f;
+				float specularIntensity = 0.18f;
 				float specularPower;
-				float padding[2];
+				BOOL  normalMapEnabled = TRUE;
+				float padding[1];
 			}         pmc;
 			pmc.specularPower = shininess;
 			// TODO: Issues here

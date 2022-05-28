@@ -56,6 +56,7 @@ namespace D3DEngine
 			Model(Graphics& gfx, const std::string fileName);
 			void Draw(Graphics& gfx) const noxnd;
 			void ShowWindow(const char* windowName = nullptr) noexcept;
+			void SetRootTransform(DirectX::FXMMATRIX tf) noexcept;
 			// we must define this destructor in .cpp file o.w. we won't be able to declare unique_ptr to a forward declared ModelWindow
 			~Model() noxnd;
 		private:

@@ -17,29 +17,28 @@ bool  normalMapEnabled;
 float padding[1];
 };
 
+cbuffer TransformCBuf : register(b2)
+{
+matrix modelViewProj;
+matrix modelView;
+}
+
 Texture2D diffuseMap : register(t0);
 Texture2D normalMap : register(t2);
 
 SamplerState splr;
 
-float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, float3 tangentCamSpace : Tangent, float3 bitangentCamSpace : Bitangent, float2 tc : TexCoord) : SV_Target
+float4 main(float3 posCamSpace : Position, float3 normalCamSpace : Normal, float2 tc : TexCoord) : SV_Target
 {
 	// sample normal from map if normal mapping enabled
 	if (normalMapEnabled)
 	{
-		// build the tranform (rotation) into tangent space
-		const float3x3 tanToView = float3x3(
-		                                    normalize(tangentCamSpace),
-		                                    normalize(bitangentCamSpace),
-		                                    normalize(normalCamSpace)
-		                                   );
-		// unpack the normal from map into tangent space
+		// unpack normal data
 		const float3 normalSample = normalMap.Sample(splr, tc).xyz;
-		normalCamSpace            = normalSample * 2.0f - 1.0f;
-		normalCamSpace.y          = -normalCamSpace.y;
-		normalCamSpace.z          = -normalCamSpace.z;
-		// bring normal from tanspace into view space
-		normalCamSpace = mul(normalCamSpace, tanToView);
+		normalCamSpace            = normalSample * 2.0f - 1.0f;               // mapping normal data from [0.0, 1.0] to [-1.0, 1.0] 
+		normalCamSpace.y          = -normalCamSpace.y;                        // flip it since directX Y points down, whereas tex coord Y points up
+		normalCamSpace.z          = -normalCamSpace.z;                        // our object-space normal points to +Z axis, but our geometry is facing -Z axis, so flip it
+		normalCamSpace            = mul(normalCamSpace, (float3x3)modelView); // convert normal from object space to normal space 
 	}
 
 	// remember to normalize the normal!
