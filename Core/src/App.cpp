@@ -1,16 +1,37 @@
 #include "App.h"
 #include "Utils/GDIPlusManager.h"
 #include "imgui/imgui.h"
+#include "Utils/NormalMapTwerker.h"
+#include <shellapi.h>
 
 namespace dx = DirectX;
 
 static GDIPlusManager gdipm;
 
-App::App()
+App::App(const std::string& commandLine)
+	: commandLine(commandLine)
 {
-	// wall_.SetRootTransform(dx::XMMatrixTranslation(5.0f, 0.0f, 0.0f));
-	// tp_.SetPos({1.5f, 0.0f, 0.0f});
-	// cube_.SetPos({-1.5f, 0.0f, 0.0f});
+	// makeshift cli for doing some preprocessing bullshit (so many hacks here)
+	if (this->commandLine != "")
+	{
+		int        nArgs;
+		const auto pLineW = GetCommandLineW();
+		const auto pArgs  = CommandLineToArgvW(pLineW, &nArgs);
+		if (nArgs >= 4 && std::wstring(pArgs[1]) == L"--ntwerk-rotx180")
+		{
+			const std::wstring pathInWide  = pArgs[2];
+			const std::wstring pathOutWide = pArgs[3];
+			D3DEngine::NormalMapTwerker::RotateXAxis180(
+			                                            std::string(pathInWide.begin(), pathInWide.end()),
+			                                            std::string(pathOutWide.begin(), pathOutWide.end())
+			                                           );
+			throw std::runtime_error("Normal map processed successfully. Just kidding about that whole runtime error thing.");
+		}
+	}
+	wall.SetRootTransform(dx::XMMatrixTranslation(-12.0f, 0.0f, 0.0f));
+	tp.SetPos({12.0f, 0.0f, 0.0f});
+	gobber.SetRootTransform(dx::XMMatrixTranslation(0.0f, 0.0f, -4.0f));
+	nano.SetRootTransform(dx::XMMatrixTranslation(0.0f, -7.0f, 6.0f));
 
 	wnd_.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
 }
@@ -22,10 +43,9 @@ void App::DoFrame()
 	wnd_.Gfx().SetCamera(cam_.GetMatrix());
 	light_.Bind(wnd_.Gfx(), cam_.GetMatrix());
 
-	// wall_.Draw(wnd_.Gfx());
-	// tp_.Draw(wnd_.Gfx());
-	// cube_.Draw(wnd_.Gfx());
-
+	wall.Draw(wnd_.Gfx());
+	tp.Draw(wnd_.Gfx());
+	nano.Draw(wnd_.Gfx());
 	gobber.Draw(wnd_.Gfx());
 	light_.Draw(wnd_.Gfx());
 
@@ -92,10 +112,11 @@ void App::DoFrame()
 	// imgui windows
 	cam_.SpawnControlWindow();
 	light_.SpawnControlWindow();
-	// wall_.ShowWindow("Wall");
-	// tp_.SpawnControlWindow(wnd_.Gfx());
-	// cube_.SpawnControlWindow(wnd_.Gfx());
+
 	gobber.ShowWindow(wnd_.Gfx(), "gobber");
+	wall.ShowWindow(wnd_.Gfx(), "Wall");
+	tp.SpawnControlWindow(wnd_.Gfx());
+	nano.ShowWindow(wnd_.Gfx(), "Nano");
 
 	// present
 	wnd_.Gfx().EndFrame();

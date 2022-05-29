@@ -18,10 +18,10 @@ namespace D3DEngine
 		AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
 		AddBind(Texture::Resolve(gfx, "Images/brickwall.jpg", 0));
-		AddBind(Texture::Resolve(gfx, "Images/brickwall_normal.jpg", 2));
+		AddBind(Texture::Resolve(gfx, "Images/brickwall_normal_obj.png", 2u));
 		AddBind(Sampler::Resolve(gfx));
 
-		auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongAssVS.cso");
+		auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongPosNormTexVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddBind(std::move(pvs));
 

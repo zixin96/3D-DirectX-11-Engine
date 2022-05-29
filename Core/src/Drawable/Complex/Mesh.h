@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <filesystem>
+
 #include "Drawable/Drawable.h"
 #include "Bindable/BindableCommon.h"
 #include "VertexView.h"
@@ -36,7 +38,7 @@ namespace D3DEngine
 		friend class Model;
 		public:
 			struct PSMaterialConstantFullmonte
-			{ 
+			{
 				BOOL              normalMapEnabled   = TRUE;
 				BOOL              specularMapEnabled = TRUE;
 				BOOL              hasGlossMap        = FALSE;
@@ -56,6 +58,7 @@ namespace D3DEngine
 			Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noxnd;
 			void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noxnd;
 			void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
+			const DirectX::XMFLOAT4X4& GetAppliedTransform() const noexcept;
 			int  GetId() const noexcept;
 			void ShowTree(Node*& pSelectedNode) const noexcept;
 
@@ -128,14 +131,14 @@ namespace D3DEngine
 	class Model
 	{
 		public:
-			Model(Graphics& gfx, const std::string fileName);
+			Model(Graphics& gfx, const std::string& pathString, float scale = 1.0f);
 			void Draw(Graphics& gfx) const noxnd;
 			void ShowWindow(Graphics& gfx, const char* windowName = nullptr) noexcept;
 			void SetRootTransform(DirectX::FXMMATRIX tf) noexcept;
 			// we must define this destructor in .cpp file o.w. we won't be able to declare unique_ptr to a forward declared ModelWindow
 			~Model() noxnd;
 		private:
-			static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials);
+			static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials, const std::filesystem::path& path, float scale);
 			std::unique_ptr<Node>        ParseNode(int& nextId, const aiNode& node) noexcept;
 		private:
 			std::unique_ptr<Node>              pRoot_;    // we only need to store the root pointer, which will lead us to the rest of the nodes

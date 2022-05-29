@@ -11,9 +11,10 @@ int WINAPI WinMain(
 {
 	try
 	{
-		App{}.Go();
+		// App{}.Go();
 		// AppAssortment{}.Go();
 		// AppAssortmentPhong{}.Go();
+		return App{ lpCmdLine }.Go();
 	}
 	// catch engine Exception
 	catch (const DXException& e)

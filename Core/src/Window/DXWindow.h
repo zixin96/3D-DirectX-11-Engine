@@ -112,5 +112,6 @@ namespace D3DEngine
 			// (b/c it can only be created after the window is initialized)
 			std::unique_ptr<Graphics> pGfx_;
 			std::vector<BYTE>         rawBuffer;
+			std::string               commandLine;
 	};
 }

@@ -1,6 +1,8 @@
 ﻿#include "Mesh.h"
 #include "imgui/imgui.h"
+#include "Utils/D3DXM.h"
 #include "Utils/Surface.h"
+#include <filesystem>
 
 namespace D3DEngine
 {
@@ -147,6 +149,10 @@ namespace D3DEngine
 		XMStoreFloat4x4(&appliedTransform_, transform);
 	}
 
+	const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const noexcept
+	{
+		return appliedTransform_;
+	}
 
 	// pImpl idiom, only defined in this .cpp
 	// this class is visible only in this .cpp file
@@ -168,9 +174,28 @@ namespace D3DEngine
 					// the next column contains all the controls
 					if (pSelectedNode_ != nullptr)
 					{
+						const auto id = pSelectedNode_->GetId();
+						auto       i  = transforms_.find(id);
+						if (i == transforms_.end())
+						{
+							const auto&         applied     = pSelectedNode_->GetAppliedTransform();
+							const auto          angles      = ExtractEulerAngles(applied);
+							const auto          translation = ExtractTranslation(applied);
+							TransformParameters tp;
+							tp.roll                  = angles.z;
+							tp.pitch                 = angles.x;
+							tp.yaw                   = angles.y;
+							tp.x                     = translation.x;
+							tp.y                     = translation.y;
+							tp.z                     = translation.z;
+							std::tie(i, std::ignore) = transforms_.insert({id, tp});
+						}
+						auto& transform = i->second;
+
 						// access selected node transformation
 						// if the current index doesn't exist in the map, this will create a new one
-						auto& transform = transforms_[pSelectedNode_->GetId()];
+						// auto& transform = transforms_[pSelectedNode_->GetId()];
+
 						ImGui::Text("Orientation");
 						ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
 						ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
@@ -222,12 +247,12 @@ namespace D3DEngine
 			std::unordered_map<int, TransformParameters> transforms_;
 	};
 
-	Model::Model(Graphics& gfx, const std::string fileName)
+	Model::Model(Graphics& gfx, const std::string& pathString, const float scale)
 		:
 		pWindow_(std::make_unique<ModelWindow>())
 	{
 		Assimp::Importer imp;
-		const auto       pScene = imp.ReadFile(fileName.c_str(),
+		const auto       pScene = imp.ReadFile(pathString.c_str(),
 		                                       aiProcess_Triangulate |
 		                                       aiProcess_JoinIdenticalVertices |
 		                                       aiProcess_ConvertToLeftHanded |
@@ -242,7 +267,7 @@ namespace D3DEngine
 
 		for (size_t i = 0; i < pScene->mNumMeshes; i++)
 		{
-			meshPtrs_.push_back(ParseMesh(gfx, *pScene->mMeshes[i], pScene->mMaterials));
+			meshPtrs_.push_back(ParseMesh(gfx, *pScene->mMeshes[i], pScene->mMaterials, pathString, scale));
 		}
 
 		int nextId = 0;
@@ -274,12 +299,12 @@ namespace D3DEngine
 	{
 	}
 
-	std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials)
+	std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials, const std::filesystem::path& path, float scale)
 	{
 		using namespace std::string_literals;
 		std::vector<std::shared_ptr<Bindable>> bindablePtrs;
 
-		const auto base = "Models/gobber/"s;
+		const auto rootPath = path.parent_path().string() + "\\";
 
 		bool         hasSpecularMap = false;
 		bool         hasAlphaGloss  = false;
@@ -296,7 +321,7 @@ namespace D3DEngine
 
 			if (material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName) == aiReturn_SUCCESS)
 			{
-				bindablePtrs.push_back(Texture::Resolve(gfx, base + texFileName.C_Str(), 0));
+				bindablePtrs.push_back(Texture::Resolve(gfx, rootPath + texFileName.C_Str(), 0));
 				hasDiffuseMap = true;
 			}
 			else
@@ -306,7 +331,7 @@ namespace D3DEngine
 
 			if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
 			{
-				auto tex      = Texture::Resolve(gfx, base + texFileName.C_Str(), 1);
+				auto tex      = Texture::Resolve(gfx, rootPath + texFileName.C_Str(), 1);
 				hasAlphaGloss = tex->HasAlpha();
 				bindablePtrs.push_back(std::move(tex));
 				hasSpecularMap = true;
@@ -323,7 +348,7 @@ namespace D3DEngine
 
 			if (material.GetTexture(aiTextureType_NORMALS, 0, &texFileName) == aiReturn_SUCCESS)
 			{
-				auto tex = Texture::Resolve(gfx, base + texFileName.C_Str(), 2);
+				auto tex = Texture::Resolve(gfx, rootPath + texFileName.C_Str(), 2);
 				bindablePtrs.push_back(std::move(tex));
 				hasNormalMap = true;
 			}
@@ -334,9 +359,8 @@ namespace D3DEngine
 			}
 		}
 
-		const auto meshTag = base + "%" + mesh.mName.C_Str();
-
-		const float scale = 6.0f;
+		// want the full path here
+		const auto meshTag = path.string() + "%" + mesh.mName.C_Str();
 
 		if (hasDiffuseMap && hasNormalMap && hasSpecularMap)
 		{
@@ -448,6 +472,60 @@ namespace D3DEngine
 			// Ns (specular power) specified for each in the material properties... bad conflict
 			bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstantDiffnorm>::Resolve(gfx, pmc, 1u));
 		}
+		else if (hasDiffuseMap && !hasNormalMap && hasSpecularMap)
+		{
+			RawVertexBufferWithLayout vbuf(std::move(
+			                                         DynamicVertexLayout{}
+			                                         .Append(DynamicVertexLayout::Position3D)
+			                                         .Append(DynamicVertexLayout::Normal)
+			                                         .Append(DynamicVertexLayout::Texture2D)
+			                                        ));
+
+			for (unsigned int i = 0; i < mesh.mNumVertices; i++)
+			{
+				vbuf.EmplaceBack(
+				                 dx::XMFLOAT3(mesh.mVertices[i].x * scale, mesh.mVertices[i].y * scale, mesh.mVertices[i].z * scale),
+				                 *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i]),
+				                 *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][i])
+				                );
+			}
+
+			std::vector<unsigned short> indices;
+			indices.reserve(mesh.mNumFaces * 3);
+			for (unsigned int i = 0; i < mesh.mNumFaces; i++)
+			{
+				const auto& face = mesh.mFaces[i];
+				assert(face.mNumIndices == 3);
+				indices.push_back(face.mIndices[0]);
+				indices.push_back(face.mIndices[1]);
+				indices.push_back(face.mIndices[2]);
+			}
+
+			bindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf));
+
+			bindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
+
+			auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongPosNormTexVS.cso");
+			auto pvsbc = pvs->GetBytecode();
+			bindablePtrs.push_back(std::move(pvs));
+
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongPSSpec.cso"));
+			bindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pvsbc));
+
+			struct PSMaterialConstantDiffuseSpec
+			{
+				float specularPowerConst;
+				BOOL  hasGloss;
+				float specularMapWeight;
+				float padding;
+			}         pmc;
+			pmc.specularPowerConst = shininess;
+			pmc.hasGloss           = hasAlphaGloss ? TRUE : FALSE;
+			pmc.specularMapWeight  = 1.0f;
+			// this is CLEARLY an issue... all meshes will share same mat const, but may have different
+			// Ns (specular power) specified for each in the material properties... bad conflict
+			bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstantDiffuseSpec>::Resolve(gfx, pmc, 1u));
+		}
 		else if (hasDiffuseMap)
 		{
 			RawVertexBufferWithLayout vbuf(std::move(
@@ -481,11 +559,11 @@ namespace D3DEngine
 
 			bindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
 
-			auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongAssVS.cso");
+			auto pvs   = VertexShader::Resolve(gfx, "Shaders/cso/PhongPosNormTexVS.cso");
 			auto pvsbc = pvs->GetBytecode();
 			bindablePtrs.push_back(std::move(pvs));
 
-			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongAssPS.cso"));
+			bindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders/cso/PhongPosNormTexPS.cso"));
 
 			bindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pvsbc));
 
