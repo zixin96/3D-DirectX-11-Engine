@@ -358,6 +358,13 @@ namespace D3DEngine
 					break;
 				}
 
+				// press esc to quit the application
+				if (wParam == VK_ESCAPE)
+				{
+					PostQuitMessage(0);
+					return 0;
+				}
+
 				kbd_.OnKeyReleased(static_cast<unsigned char>(wParam));
 				break;
 			case WM_CHAR:
