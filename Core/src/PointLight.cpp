@@ -45,8 +45,8 @@ namespace D3DEngine
 	void PointLight::Reset() noexcept
 	{
 		cbData_ = {
-			{10.0f, 9.0f, 2.5f},
-			{0.05f, 0.05f, 0.05f},
+			{10.0f, 9.0f, 2.5f},   // adjust point light initial position if needed
+			{0.05f, 0.05f, 0.05f}, // turn down the ambient if needed
 			{1.0f, 1.0f, 1.0f},
 			1.0f,
 			1.0f,

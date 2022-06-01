@@ -561,7 +561,7 @@ namespace D3DEngine
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	void DXWindow::EnableCursor()
+	void DXWindow::EnableCursor() noxnd
 	{
 		cursorEnabled_ = true;
 		ShowCursor();
@@ -569,7 +569,7 @@ namespace D3DEngine
 		FreeCursor();
 	}
 
-	void DXWindow::DisableCursor()
+	void DXWindow::DisableCursor() noxnd
 	{
 		cursorEnabled_ = false;
 		HideCursor();

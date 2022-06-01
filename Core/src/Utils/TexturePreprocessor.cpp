@@ -28,6 +28,10 @@ namespace D3DEngine
 		surf.Save(pathOut);
 	}
 
+	/**
+	 * \brief 
+	 * \param objPath Obj file path
+	 */
 	void TexturePreprocessor::FlipYAllNormalMapsInObj(const std::string& objPath)
 	{
 		const auto rootPath = std::filesystem::path{objPath}.parent_path().string() + "\\";

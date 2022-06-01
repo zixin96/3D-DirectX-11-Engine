@@ -49,7 +49,7 @@ namespace D3DEngine
 
 	void Camera::Reset() noexcept
 	{
-		pos   = {-13.5f, 6.0f, 3.5f};
+		pos   = {-13.5f, 6.0f, 3.5f}; // adjust camera initial position if needed
 		pitch = 0.0f;
 		yaw   = PI / 2.0f;
 	}
