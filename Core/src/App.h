@@ -29,8 +29,9 @@ class App
 
 		D3DEngine::Camera     cam_{};
 		D3DEngine::PointLight light_{wnd_.Gfx()};
-		D3DEngine::Model      gobber{wnd_.Gfx(), "Models\\gobber\\GoblinX.obj", 6.0f};
-		D3DEngine::Model      wall{wnd_.Gfx(), "Models\\brick_wall\\brick_wall.obj", 6.0f};
-		D3DEngine::TestPlane  tp{wnd_.Gfx(), 6.0};
-		D3DEngine::Model      nano{wnd_.Gfx(), "Models\\nano_textured\\nanosuit.obj", 2.0f};
+		// D3DEngine::Model      gobber{wnd_.Gfx(), "Models\\gobber\\GoblinX.obj", 6.0f};
+		// D3DEngine::Model      wall{wnd_.Gfx(), "Models\\brick_wall\\brick_wall.obj", 6.0f};
+		// D3DEngine::TestPlane  tp{wnd_.Gfx(), 6.0};
+		// D3DEngine::Model      nano{wnd_.Gfx(), "Models\\nano_textured\\nanosuit.obj", 2.0f};
+		D3DEngine::Model sponza{wnd_.Gfx(), "Models\\sponza\\sponza.obj", 1.0f / 20.0f};
 };
