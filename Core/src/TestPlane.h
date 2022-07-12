@@ -6,12 +6,19 @@ namespace D3DEngine
 	class TestPlane : public Drawable
 	{
 		public:
-			TestPlane(Graphics& gfx, float size);
+			TestPlane(Graphics& gfx, float size, DirectX::XMFLOAT4 color = {1.0f, 1.0f, 1.0f, 0.0f});
+			// TestPlane(Graphics& gfx, float size);
 			void              SetPos(DirectX::XMFLOAT3 pos) noexcept;
 			void              SetRotation(float roll, float pitch, float yaw) noexcept;
 			DirectX::XMMATRIX GetTransformXM() const noexcept override;
-			void              SpawnControlWindow(Graphics& gfx) noexcept;
+			void              SpawnControlWindow(Graphics& gfx, const std::string& name) noexcept;
 		private:
+			struct PSMaterialConstant
+			{
+				DirectX::XMFLOAT4 color;
+			}                     pmc;
+
+			/*
 			struct PSMaterialConstant
 			{
 				float specularIntensity = 0.18f;
@@ -20,6 +27,7 @@ namespace D3DEngine
 				BOOL  normalMappingEnabled = TRUE;
 				float padding[1];
 			}         pmc;
+			*/
 
 			DirectX::XMFLOAT3 pos   = {0.0f, 0.0f, 0.0f};
 			float             roll  = 0.0f;

@@ -33,8 +33,12 @@ namespace D3DEngine
 
 		AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-		// TODO: Why is this not resolve()?
+		// Why is this not resolve()? Since we typically don't want to share transforms
 		AddBind(std::make_shared<TransformCbuf>(gfx, *this, 0));
+
+		AddBind(Blender::Resolve(gfx, false));
+
+		AddBind(Rasterizer::Resolve(gfx, false));
 	}
 
 	void SolidSphere::SetPos(DirectX::XMFLOAT3 pos) noexcept

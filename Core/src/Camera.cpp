@@ -77,4 +77,9 @@ namespace D3DEngine
 			pos.z + translation.z
 		};
 	}
+
+	DirectX::XMFLOAT3 Camera::GetPos() const noexcept
+	{
+		return pos;
+	}
 }

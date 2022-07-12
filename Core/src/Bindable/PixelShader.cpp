@@ -12,8 +12,7 @@ namespace D3DEngine
 
 		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
 		GFX_THROW_INFO(D3DReadFileToBlob(std::wstring{ path.begin(),path.end() }.c_str(), &pBlob));
-		GFX_THROW_INFO(
-		               GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader_));
+		GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader_));
 	}
 
 	void PixelShader::Bind(Graphics& gfx) noexcept

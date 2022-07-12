@@ -60,6 +60,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/App/PhongPSN
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/App/PhongNotex/PhongVSNotex.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Vertex" VS_SHADER_OBJECT_FILE_NAME            "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/App/PhongNotex/PhongPSNotex.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/App/PhongPSSpec.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/App/PhongPSSpecNormMask.hlsl PROPERTIES VS_SHADER_MODEL "4.0" VS_SHADER_TYPE "Pixel" VS_SHADER_OBJECT_FILE_NAME             "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/cso/%(Filename).cso" VS_SHADER_ENABLE_DEBUG "true" VS_SHADER_DISABLE_OPTIMIZATIONS "true")
 
 
 # pch boosts our fucking compiler time

@@ -50,25 +50,29 @@ App::App(const std::string& commandLine)
 	//tp.SetPos( { 12.0f,0.0f,0.0f } );
 	//gobber.SetRootTransform( dx::XMMatrixTranslation( 0.0f,0.0f,-4.0f ) );
 	//nano.SetRootTransform( dx::XMMatrixTranslation( 0.0f,-7.0f,6.0f ) );
+	bluePlane.SetPos(cam.GetPos());
+	redPlane.SetPos(cam.GetPos());
 
-	wnd_.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f)); // adjust the draw distance based on your scene
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f)); // adjust the draw distance based on your scene
 }
 
 void App::DoFrame()
 {
 	const auto dt = timer_.Mark() * speedFactor_;
-	wnd_.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
-	wnd_.Gfx().SetCamera(cam_.GetMatrix());
-	light_.Bind(wnd_.Gfx(), cam_.GetMatrix());
+	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+	wnd.Gfx().SetCamera(cam.GetMatrix());
+	light_.Bind(wnd.Gfx(), cam.GetMatrix());
 
 	// wall.Draw(wnd_.Gfx());
 	// tp.Draw(wnd_.Gfx());
 	// nano.Draw(wnd_.Gfx());
 	// gobber.Draw(wnd_.Gfx());
-	light_.Draw(wnd_.Gfx());
-	sponza.Draw(wnd_.Gfx());
+	light_.Draw(wnd.Gfx());
+	sponza.Draw(wnd.Gfx());
+	bluePlane.Draw(wnd.Gfx());
+	redPlane.Draw(wnd.Gfx());
 
-	while (const auto e = wnd_.kbd_.ReadKey())
+	while (const auto e = wnd.kbd_.ReadKey())
 	{
 		if (!e->IsPress())
 		{
@@ -78,68 +82,70 @@ void App::DoFrame()
 		switch (e->GetCode())
 		{
 			case VK_F1:
-				if (wnd_.CursorEnabled())
+				if (wnd.CursorEnabled())
 				{
-					wnd_.DisableCursor();
-					wnd_.mouse_.EnableRaw();
+					wnd.DisableCursor();
+					wnd.mouse_.EnableRaw();
 				}
 				else
 				{
-					wnd_.EnableCursor();
-					wnd_.mouse_.DisableRaw();
+					wnd.EnableCursor();
+					wnd.mouse_.DisableRaw();
 				}
 				break;
 		}
 	}
 
-	if (!wnd_.CursorEnabled())
+	if (!wnd.CursorEnabled())
 	{
-		if (wnd_.kbd_.KeyIsPressed('W'))
+		if (wnd.kbd_.KeyIsPressed('W'))
 		{
-			cam_.Translate({0.0f, 0.0f, dt});
+			cam.Translate({0.0f, 0.0f, dt});
 		}
-		if (wnd_.kbd_.KeyIsPressed('A'))
+		if (wnd.kbd_.KeyIsPressed('A'))
 		{
-			cam_.Translate({-dt, 0.0f, 0.0f});
+			cam.Translate({-dt, 0.0f, 0.0f});
 		}
-		if (wnd_.kbd_.KeyIsPressed('S'))
+		if (wnd.kbd_.KeyIsPressed('S'))
 		{
-			cam_.Translate({0.0f, 0.0f, -dt});
+			cam.Translate({0.0f, 0.0f, -dt});
 		}
-		if (wnd_.kbd_.KeyIsPressed('D'))
+		if (wnd.kbd_.KeyIsPressed('D'))
 		{
-			cam_.Translate({dt, 0.0f, 0.0f});
+			cam.Translate({dt, 0.0f, 0.0f});
 		}
-		if (wnd_.kbd_.KeyIsPressed('R'))
+		if (wnd.kbd_.KeyIsPressed('R'))
 		{
-			cam_.Translate({0.0f, dt, 0.0f});
+			cam.Translate({0.0f, dt, 0.0f});
 		}
-		if (wnd_.kbd_.KeyIsPressed('F'))
+		if (wnd.kbd_.KeyIsPressed('F'))
 		{
-			cam_.Translate({0.0f, -dt, 0.0f});
+			cam.Translate({0.0f, -dt, 0.0f});
 		}
 	}
 
-	while (const auto delta = wnd_.mouse_.ReadRawDelta())
+	while (const auto delta = wnd.mouse_.ReadRawDelta())
 	{
-		if (!wnd_.CursorEnabled())
+		if (!wnd.CursorEnabled())
 		{
-			cam_.Rotate((float)delta->x, (float)delta->y);
+			cam.Rotate((float)delta->x, (float)delta->y);
 		}
 	}
 
 	// imgui windows
-	cam_.SpawnControlWindow();
+	cam.SpawnControlWindow();
 	light_.SpawnControlWindow();
 
 	// gobber.ShowWindow(wnd_.Gfx(), "gobber");
 	// wall.ShowWindow(wnd_.Gfx(), "Wall");
 	// tp.SpawnControlWindow(wnd_.Gfx());
 	// nano.ShowWindow(wnd_.Gfx(), "Nano");
+	sponza.ShowWindow(wnd.Gfx(), "Sponza");
+	bluePlane.SpawnControlWindow(wnd.Gfx(), "Blue Plane");
+	redPlane.SpawnControlWindow(wnd.Gfx(), "Red Plane");
 
-	sponza.ShowWindow(wnd_.Gfx(), "Sponza");
 	// present
-	wnd_.Gfx().EndFrame();
+	wnd.Gfx().EndFrame();
 }
 
 int App::Go()
